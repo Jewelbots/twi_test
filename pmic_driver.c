@@ -70,6 +70,18 @@ void pmic_init()
 		SEGGER_RTT_WriteString(0,"Error writing PMIC_REG_IRMASK0 configuration!\n");
 		return;
 	}
+	// Read and print out all registers, are they what we think?
+	uint8_t reg_num;
+	for (reg_num = 1; reg_num < 19; reg_num++) {
+		uint8_t val = 0;
+		success = pmic_driver_read_reg(reg_num, &val);
+		if(!success) {
+			SEGGER_RTT_printf(0, "PMIC read failed for write register: %u\n", reg_num);
+		}
+		else {
+			SEGGER_RTT_printf(0, "PMIC read register: %u.  Value was:  %u\n", reg_num, val);
+		}
+	}
 	pmic_clear_interrupts();
 }
 

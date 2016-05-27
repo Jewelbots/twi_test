@@ -145,8 +145,10 @@ int main(void)
     SEGGER_RTT_WriteString(0, "PMIC INIT\n");
     haptics_init();
     SEGGER_RTT_WriteString(0, "HAPTICS INIT\n");
+		nrf_delay_ms(2000);  //delay to feel difference between haptics init and first test run
      if (pmic_is_charging()) {
       SEGGER_RTT_WriteString(0, "haptics_test_run2\n");
+			SEGGER_RTT_WriteString(0, "\n");
       haptics_test_run2();
       nrf_delay_ms(10000);
     }
@@ -158,7 +160,7 @@ int main(void)
     }
     if (pmic_5V_present()) {
       haptics_test_run1();
-      SEGGER_RTT_WriteString(0, "haptics_test_run1n");
+      SEGGER_RTT_WriteString(0, "haptics_test_run1\n");
       SEGGER_RTT_WriteString(0, "\n");
       nrf_delay_ms(10000);
     }
