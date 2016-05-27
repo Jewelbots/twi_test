@@ -76,10 +76,10 @@ void pmic_init()
 		uint8_t val = 0;
 		success = pmic_driver_read_reg(reg_num, &val);
 		if(!success) {
-			SEGGER_RTT_printf(0, "PMIC read failed for write register: %u\n", reg_num);
+			SEGGER_RTT_printf(0, "PMIC read failed for write register: %02x\n", reg_num);
 		}
 		else {
-			SEGGER_RTT_printf(0, "PMIC read register: %u.  Value was:  %u\n", reg_num, val);
+			SEGGER_RTT_printf(0, "PMIC read register: %u.  Value was:  %02x\n", reg_num, val);
 		}
 	}
 	pmic_clear_interrupts();
