@@ -62,53 +62,6 @@ static volatile bool m_xfer_done = true;
 static volatile bool m_set_mode_done;
 /* TWI instance. */
 nrf_drv_twi_t app_twi_instance = NRF_DRV_TWI_INSTANCE(0);
-static bool use_event_handler = false;
-
-
-/**
- * @brief TWI events handler.
- */
-void twi_handler(nrf_drv_twi_evt_t const * p_event, void * p_context)
-{   
-    
-    switch(p_event->type)
-    {
-        case NRF_DRV_TWI_RX_DONE:
-            m_xfer_done = true;
-            break;
-        case NRF_DRV_TWI_TX_DONE:
-            if(m_set_mode_done != true)
-            {
-                m_set_mode_done  = true;
-                return;
-            }
-            m_xfer_done = false;
-            /* Read 4 bytes from the specified address. */
-            //err_code = nrf_drv_twi_rx(&m_twi_mma_7660, MMA7660_ADDR, (uint8_t*)&m_sample, sizeof(m_sample), false);
-            //APP_ERROR_CHECK(err_code);
-            break;
-        default:
-            break;        
-    }   
-}
-
-void twi_init_with_handler (void)
-{
-    ret_code_t err_code;
-    
-    const nrf_drv_twi_config_t twi_config = {
-       .scl                = I2C_SCL,
-       .sda                = I2C_SDA,
-       .frequency          = NRF_TWI_FREQ_400K,
-       .interrupt_priority = APP_IRQ_PRIORITY_HIGH
-    };
-    
-    err_code = nrf_drv_twi_init(&app_twi_instance, &twi_config, twi_handler, NULL);
-    APP_ERROR_CHECK(err_code);
-    SEGGER_RTT_printf(0, "nrf_drv_twi_init with handler: err_code: %u\n", err_code);
-    
-    nrf_drv_twi_enable(&app_twi_instance);
-}
 
 static void twi_init()
 {
@@ -134,19 +87,15 @@ static void twi_init()
 int main(void)
 {
    // int a = __GNUC__, c = __GNUC_PATCHLEVEL__;
-    if (use_event_handler) {
-      twi_init_with_handler();
-      SEGGER_RTT_WriteString(0, "TWI INIT WITH HANDLER\n");
-    } else {
-      twi_init();
-      SEGGER_RTT_WriteString(0, "TWI INIT\n");
-    }
+
+    twi_init();
+    SEGGER_RTT_WriteString(0, "TWI INIT\n");
     pmic_init();
     SEGGER_RTT_WriteString(0, "PMIC INIT\n");
     haptics_init();
     SEGGER_RTT_WriteString(0, "HAPTICS INIT\n");
 		nrf_delay_ms(2000);  //delay to feel difference between haptics init and first test run
-     if (pmic_is_charging()) {
+    if (pmic_is_charging()) {
       SEGGER_RTT_WriteString(0, "haptics_test_run2\n");
 			SEGGER_RTT_WriteString(0, "\n");
       haptics_test_run2();
@@ -175,18 +124,8 @@ int main(void)
     {
         nrf_delay_ms(100);
         /* Start transaction with a slave with the specified address. */
-        if (use_event_handler) {
-          do
-          {
-              __WFE();
-          }while(m_xfer_done == false);
           //err_code = nrf_drv_twi_tx(&m_twi_mma_7660, MMA7660_ADDR, &reg, sizeof(reg), true);
           //APP_ERROR_CHECK(err_code);
-          m_xfer_done = false;
-        }
-        else {
-         
-        }
     }
 }
 

@@ -61,7 +61,7 @@ static uint8_t I2C_ReadSingleByte( uint8_t regstr )
 	data = regstr;
 	ret_code_t err_code = nrf_drv_twi_tx(&app_twi_instance, DRV2604_I2C_ADDRESS, &data, 1, true);
 	APP_ERROR_CHECK(err_code);
-	err_code = nrf_drv_twi_rx(&app_twi_instance, DRV2604_I2C_ADDRESS, &data, 1, false);
+	err_code = nrf_drv_twi_rx(&app_twi_instance, DRV2604_I2C_ADDRESS, &data, 1);
 	APP_ERROR_CHECK(err_code);
 	return data;
 }

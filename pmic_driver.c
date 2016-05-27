@@ -21,7 +21,7 @@ static bool pmic_driver_read_reg(uint8_t reg, uint8_t * data)
     SEGGER_RTT_printf(0, "PMIC nrf_drv_twi_tx failed for read register: %u, Error code: %u\n", reg, err_code);
 		return false;
 	}
-	err_code = nrf_drv_twi_rx(&app_twi_instance, PMIC_I2C_ADDRESS, data, 1, false);
+	err_code = nrf_drv_twi_rx(&app_twi_instance, PMIC_I2C_ADDRESS, data, 1);
   if (err_code != NRF_SUCCESS) {
     SEGGER_RTT_printf(0, "PMIC nrf_drv_twi_rx failed for read register: %u, Error code: %u\n", reg, err_code);
   }

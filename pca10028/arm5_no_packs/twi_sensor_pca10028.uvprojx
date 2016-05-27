@@ -371,9 +371,9 @@
             <vShortWch>0</vShortWch>
             <VariousControls>
               <MiscControls>--c99</MiscControls>
-              <Define>BSP_DEFINES_ONLY BOARD_JEWELBOT NRF51 DEBUG</Define>
+              <Define>BSP_DEFINES_ONLY BOARD_JEWELBOT NRF51 DEBUG NRF_LOG_USES_RTT</Define>
               <Undefine></Undefine>
-              <IncludePath>.\config\twi_sensor_pca10028;..\..\config;..\..\nrf51_sdk\components\toolchain;..\..\nrf51_sdk\components\drivers_nrf\common;..\..\nrf51_sdk\components\drivers_nrf\delay;..\..\nrf51_sdk\components\drivers_nrf\hal;..\..\nrf51_sdk\components\drivers_nrf\nrf_soc_nosd;..\..\nrf51_sdk\components\drivers_nrf\twi_master;..\..\nrf51_sdk\components\drivers_nrf\config;..\..\nrf51_sdk\components\drivers_nrf\uart;..\..\nrf51_sdk\components\libraries\fifo;..\..\nrf51_sdk\components\libraries\uart;..\..\nrf51_sdk\components\libraries\util;..\..\bsp;..\..\..\twi_test;..\..\..\twi_test;..\..\nrf51_sdk\components\drivers_ext\segger_rtt</IncludePath>
+              <IncludePath>.\config\twi_sensor_pca10028;..\..\config;..\..\nrf51_sdk\components\toolchain;..\..\nrf51_sdk\components\drivers_nrf\common;..\..\nrf51_sdk\components\drivers_nrf\delay;..\..\nrf51_sdk\components\drivers_nrf\hal;..\..\nrf51_sdk\components\drivers_nrf\nrf_soc_nosd;..\..\nrf51_sdk\components\drivers_nrf\twi_master;..\..\nrf51_sdk\components\drivers_nrf\config;..\..\nrf51_sdk\components\drivers_nrf\uart;..\..\nrf51_sdk\components\libraries\fifo;..\..\nrf51_sdk\components\libraries\uart;..\..\nrf51_sdk\components\libraries\util;..\..\nrf51_sdk\external\segger_rtt;..\..\bsp;..\..\..\twi_test;..\..\..\twi_test</IncludePath>
             </VariousControls>
           </Cads>
           <Aads>
@@ -449,17 +449,17 @@
             <File>
               <FileName>RTT_Syscalls_KEIL.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\nrf51_sdk\components\drivers_ext\segger_rtt\RTT_Syscalls_KEIL.c</FilePath>
+              <FilePath>..\..\nrf51_sdk\external\segger_rtt\RTT_Syscalls_KEIL.c</FilePath>
             </File>
             <File>
               <FileName>SEGGER_RTT.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\nrf51_sdk\components\drivers_ext\segger_rtt\SEGGER_RTT.c</FilePath>
+              <FilePath>..\..\nrf51_sdk\external\segger_rtt\SEGGER_RTT.c</FilePath>
             </File>
             <File>
               <FileName>SEGGER_RTT_printf.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\nrf51_sdk\components\drivers_ext\segger_rtt\SEGGER_RTT_printf.c</FilePath>
+              <FilePath>..\..\nrf51_sdk\external\segger_rtt\SEGGER_RTT_printf.c</FilePath>
             </File>
           </Files>
         </Group>
@@ -520,6 +520,11 @@
               <FileName>app_fifo.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\..\nrf51_sdk\components\libraries\fifo\app_fifo.c</FilePath>
+            </File>
+            <File>
+              <FileName>app_error_weak.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\nrf51_sdk\components\libraries\util\app_error_weak.c</FilePath>
             </File>
           </Files>
         </Group>

@@ -282,7 +282,7 @@
 #define SPIS_COUNT   (SPIS0_ENABLED + SPIS1_ENABLED + SPIS2_ENABLED)
 
 /* UART */
-#define UART0_ENABLED 0
+#define UART0_ENABLED 1
 
 #if (UART0_ENABLED == 1)
 #define UART0_CONFIG_HWFC         NRF_UART_HWFC_DISABLED
@@ -301,7 +301,7 @@
 #endif //NRF52
 #endif
 
-#define TWI0_ENABLED 0
+#define TWI0_ENABLED 1
 
 #if (TWI0_ENABLED == 1)
 #define TWI0_USE_EASY_DMA 0
