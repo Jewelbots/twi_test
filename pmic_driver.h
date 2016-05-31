@@ -7,7 +7,9 @@
 
 
 #define PMIC_REG_CHGSTATUS		    (0x01)
+#define PMIC_REG_CHGCONFIG0       (0x02)
 #define PMIC_REG_DEFDCDC1         (0x07)
+
 #define PMIC_CONTROL1_REG         (0x0A)
 #define PMIC_REG_IR0		          (0x10)
 #define PMIC_REG_IR1		          (0x11)
@@ -19,6 +21,7 @@
 #define PMIC_5V_PRESENT_MASK	    (0x04)
 #define PMIC_CHARGING_MASK		    (0x08)
 #define PMIC_DCDC1_ENABLE_MASK    (0x80)
+#define PMIC_CH_EN_MASK           (0x00)
 
 
 #define PMIC_CH_PGOOD             (0x04)
@@ -30,5 +33,8 @@ void pmic_disable(void);
 bool pmic_is_charging(void);
 bool pmic_5V_present(void);
 void pmic_clear_interrupts(void);
+bool pmic_toggle_charging(void);
+bool pmic_turn_on_charging(void);
+bool pmic_turn_off_charging(void);
 
 #endif

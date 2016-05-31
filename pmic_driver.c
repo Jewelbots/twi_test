@@ -46,6 +46,7 @@ static bool pmic_driver_write_reg(uint8_t reg, uint8_t data)
 
 void pmic_init()
 {
+  pmic_turn_off_charging();
 	bool success;
 	uint8_t val = 0;
 	success = pmic_driver_read_reg(PMIC_REG_DEFDCDC1, &val);
@@ -53,7 +54,6 @@ void pmic_init()
 		SEGGER_RTT_WriteString(0,"Error reading DCDC1 configuration!\n");
 		return;
 	}
-
 
 	/* Enable DCDC1 */
 	//app_trace_log("DCDC 1 Before Write %02x\n", val);
@@ -63,13 +63,17 @@ void pmic_init()
 		SEGGER_RTT_WriteString(0,"Error writing DCDC1 configuration!\n");
 		return;
 	}
-
+  
+  
 	val = ~(PMIC_CH_PGOOD | PMIC_CH_ACTIVE);  // enable interrupts for CH_PGOOD and CH_ACTIVE
 	success = pmic_driver_write_reg(PMIC_REG_IRMASK0, val);
 	if(!success) {
 		SEGGER_RTT_WriteString(0,"Error writing PMIC_REG_IRMASK0 configuration!\n");
 		return;
 	}
+  
+  //uint8_t chgcfg0_val;
+  
 	// Read and print out all registers, are they what we think?
 	uint8_t reg_num;
 	for (reg_num = 1; reg_num < 19; reg_num++) {
@@ -82,6 +86,7 @@ void pmic_init()
 			SEGGER_RTT_printf(0, "PMIC read register: %u.  Value was:  %02x\n", reg_num, val);
 		}
 	}
+  
 	pmic_clear_interrupts();
 }
 
@@ -142,4 +147,69 @@ bool pmic_5V_present(void)
 		return true;
 	}
 	return false;
+}
+
+bool pmic_toggle_charging() {
+  uint8_t success;
+  uint8_t val = 0;
+  
+  SEGGER_RTT_WriteString(0, "Toggle Charging\n");
+  success = pmic_driver_read_reg(PMIC_REG_CHGCONFIG0, &val);
+  SEGGER_RTT_printf(0, "CHGCONFIG0 val after read is: %02x\n", val);
+  if (!success) {
+    SEGGER_RTT_WriteString(0, "failed to read CHGCONFIG0 register!\n");
+    return false;
+  }
+  val = val ^ (1<<0);
+  SEGGER_RTT_printf(0, "CHGCONFIG0 val after change is: %02x\n", val);
+  success = pmic_driver_write_reg(PMIC_REG_CHGCONFIG0, val);
+  if (!success) {
+    SEGGER_RTT_WriteString(0, "failed to write CHGCONFIG0 register!\n");
+    return false;
+  }
+  return true;
+  
+  //success = pmic_driver_write_reg(PMIC_REG_CHGCONFIG0, 
+}
+bool pmic_turn_off_charging() {
+  uint8_t success;
+  uint8_t val = 0;
+  
+  SEGGER_RTT_WriteString(0, "Toggle Charging\n");
+  success = pmic_driver_read_reg(PMIC_REG_CHGCONFIG0, &val);
+  SEGGER_RTT_printf(0, "CHGCONFIG0 val after read is: %02x\n", val);
+  if (!success) {
+    SEGGER_RTT_WriteString(0, "failed to read CHGCONFIG0 register!\n");
+    return false;
+  }
+  val &= ~(1 << 0);
+
+  SEGGER_RTT_printf(0, "CHGCONFIG0 val after change is: %02x\n", val);
+  success = pmic_driver_write_reg(PMIC_REG_CHGCONFIG0, val);
+  if (!success) {
+    SEGGER_RTT_WriteString(0, "failed to write CHGCONFIG0 register!\n");
+    return false;
+  }
+  return true;
+}
+
+bool pmic_turn_on_charging() {
+  uint8_t success;
+  uint8_t val = 0;
+  
+  SEGGER_RTT_WriteString(0, "Toggle Charging\n");
+  success = pmic_driver_read_reg(PMIC_REG_CHGCONFIG0, &val);
+  SEGGER_RTT_printf(0, "CHGCONFIG0 val after read is: %02x\n", val);
+  if (!success) {
+    SEGGER_RTT_WriteString(0, "failed to read CHGCONFIG0 register!\n");
+    return false;
+  }
+  val |= 1 << 0;
+  SEGGER_RTT_printf(0, "CHGCONFIG0 val after change is: %02x\n", val);
+  success = pmic_driver_write_reg(PMIC_REG_CHGCONFIG0, val);
+  if (!success) {
+    SEGGER_RTT_WriteString(0, "failed to write CHGCONFIG0 register!\n");
+    return false;
+  }
+  return true;
 }

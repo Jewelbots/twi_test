@@ -554,6 +554,7 @@ ret_code_t nrf_drv_twi_init(nrf_drv_twi_t const * const  p_instance,
                             nrf_drv_twi_evt_handler_t    event_handler,
                             void *                       p_context)
 {
+    //m_cb[p_instance->instance_id].transfer_in_progress = false;
     if (m_cb[p_instance->instance_id].state != NRF_DRV_STATE_UNINITIALIZED)
     {
         return NRF_ERROR_INVALID_STATE;
