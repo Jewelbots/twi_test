@@ -371,7 +371,7 @@
             <vShortWch>0</vShortWch>
             <VariousControls>
               <MiscControls>--c99</MiscControls>
-              <Define>BSP_DEFINES_ONLY BOARD_JEWELBOT NRF51 DEBUG</Define>
+              <Define>BSP_DEFINES_ONLY BOARD_JEWELBOT NRF51 DEBUG SIMULATE_BATTERY</Define>
               <Undefine></Undefine>
               <IncludePath>.\config\twi_sensor_pca10028;..\..\config;..\..\nrf51_sdk\components\toolchain;..\..\nrf51_sdk\components\drivers_nrf\common;..\..\nrf51_sdk\components\drivers_nrf\delay;..\..\nrf51_sdk\components\drivers_nrf\hal;..\..\nrf51_sdk\components\drivers_nrf\nrf_soc_nosd;..\..\nrf51_sdk\components\drivers_nrf\twi_master;..\..\nrf51_sdk\components\drivers_nrf\config;..\..\nrf51_sdk\components\drivers_nrf\uart;..\..\nrf51_sdk\components\libraries\fifo;..\..\nrf51_sdk\components\libraries\uart;..\..\nrf51_sdk\components\libraries\util;..\..\bsp;..\..\..\twi_test;..\..\..\twi_test;..\..\nrf51_sdk\components\drivers_ext\segger_rtt</IncludePath>
             </VariousControls>
