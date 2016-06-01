@@ -74,11 +74,3 @@ unsigned char haptics_test_run4(void)
 	return 0;
 }
 
-
-
-
-
-void haptics_test_halt(void)
-{
-	Haptics_DisableAmplifier();
-}

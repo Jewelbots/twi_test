@@ -143,6 +143,7 @@ int main(void)
     }
     pmic_init();
     SEGGER_RTT_WriteString(0, "PMIC INIT\n");
+    nrf_delay_us(500);
     haptics_init();
     SEGGER_RTT_WriteString(0, "HAPTICS INIT\n");
     //pmic_turn_on_charging();
@@ -154,20 +155,20 @@ int main(void)
       nrf_delay_ms(10000);
     }
     else {
-      haptics_test_run3();
       SEGGER_RTT_WriteString(0, "haptics_test_run3\n");
+      haptics_test_run3();
       SEGGER_RTT_WriteString(0, "\n");
       nrf_delay_ms(10000);
     }
     if (pmic_5V_present()) {
-      haptics_test_run1();
       SEGGER_RTT_WriteString(0, "haptics_test_run1\n");
+      haptics_test_run1();
       SEGGER_RTT_WriteString(0, "\n");
       nrf_delay_ms(10000);
     }
     else { 
-      haptics_test_run4();
       SEGGER_RTT_WriteString(0, "haptics_test_run4\n");
+      haptics_test_run4();
       SEGGER_RTT_WriteString(0, "\n");
       nrf_delay_ms(10000);
     }

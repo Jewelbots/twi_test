@@ -46,6 +46,12 @@ static bool pmic_driver_write_reg(uint8_t reg, uint8_t data)
 
 void pmic_init()
 {
+#ifdef SIMULATE_CHARGING
+  return;
+#endif
+#ifdef SIMULATE_BATTERY
+  return;
+#endif
   //pmic_turn_off_charging();
 	bool success;
 	uint8_t val = 0;
@@ -73,7 +79,7 @@ void pmic_init()
 	}
   
   //uint8_t chgcfg0_val;
-  
+  //pmic_enable_dynamic_ppm();
 	// Read and print out all registers, are they what we think?
 	uint8_t reg_num;
 	for (reg_num = 1; reg_num < 19; reg_num++) {
@@ -121,6 +127,11 @@ void pmic_disable()
 
 bool pmic_is_charging(void)
 {
+#ifdef SIMULATE_CHARGING
+  return true;
+#elif SIMULATE_BATTERY
+  return false;
+#endif
 	uint8_t success;
 	uint8_t val;
 	success = pmic_driver_read_reg(PMIC_REG_CHGSTATUS, &val);
@@ -136,6 +147,12 @@ bool pmic_is_charging(void)
 
 bool pmic_5V_present(void)
 {
+#ifdef SIMULATE_CHARGING
+  return true;
+#elif SIMULATE_BATTERY
+  return false;
+#endif
+
 	uint8_t success;
 	uint8_t val;
 	success = pmic_driver_read_reg(PMIC_REG_CHGSTATUS, &val);
@@ -212,4 +229,52 @@ bool pmic_turn_on_charging() {
     return false;
   }
   return true;
+}
+
+bool pmic_enable_dynamic_ppm(void) {
+  // 00100000 //default       0x20
+  // 00010000 //enabled       0x10
+  uint8_t success;
+  uint8_t val = 0;
+  SEGGER_RTT_WriteString(0, "Turn on Dynamic PPM\n");
+  success = pmic_driver_read_reg(PMIC_REG_CHGCONFIG0, &val);
+  SEGGER_RTT_printf(0, "CHGCONFIG0 val after read is: %02x\n", val);
+  if (!success) {
+    SEGGER_RTT_WriteString(0, "failed to read CHGCONFIG0 register!\n");
+    return false;
+  }
+  val &= ~((1 << 4) | (1 << 5));
+  val |= PMIC_DPPM_ENABLED;
+  SEGGER_RTT_printf(0, "CHGCONFIG0 val after change is: %02x\n", val);
+  success = pmic_driver_write_reg(PMIC_REG_CHGCONFIG0, val);
+  if (!success) {
+    SEGGER_RTT_WriteString(0, "failed to write CHGCONFIG0 register!\n");
+    return false;
+  }
+  return true;
+  
+}
+
+bool pmic_disable_dynamic_ppm(void) {
+ // 00100000 //default       0x20
+  // 00010000 //enabled       0x10
+  uint8_t success;
+  uint8_t val = 0;
+  SEGGER_RTT_WriteString(0, "Turn off Dynamic PPM\n");
+  success = pmic_driver_read_reg(PMIC_REG_CHGCONFIG0, &val);
+  SEGGER_RTT_printf(0, "CHGCONFIG0 val after read is: %02x\n", val);
+  if (!success) {
+    SEGGER_RTT_WriteString(0, "failed to read CHGCONFIG0 register!\n");
+    return false;
+  }
+  val &= ~((1 << 4) | (1 << 5)); //reset bits; then disable
+  val |= PMIC_DPPM_DISABLED;
+  SEGGER_RTT_printf(0, "CHGCONFIG0 val after change is: %02x\n", val);
+  success = pmic_driver_write_reg(PMIC_REG_CHGCONFIG0, val);
+  if (!success) {
+    SEGGER_RTT_WriteString(0, "failed to write CHGCONFIG0 register!\n");
+    return false;
+  }
+  return true;
+
 }

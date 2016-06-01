@@ -235,7 +235,7 @@ all eight identifiers are played (register addresses 0x04 through 0x0B), whichev
 /****************************************************************************/
 #define DRV260x_CONTROL1	(0x1B)
 /*** Register Bits ***/
-#define StartupBoost	(0x80)
+#define StartupBoost	(0x80)//OFF 0x00 //ON (0x80)
 #define BypassComp		(0x40)
 #define AC_Couple		(0x20)
 #define DC_Couple		(0x00)

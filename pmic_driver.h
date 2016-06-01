@@ -27,6 +27,8 @@
 #define PMIC_CH_PGOOD             (0x04)
 #define PMIC_CH_ACTIVE            (0x08)
 #define PMIC_PB_STAT              (0x10)
+#define PMIC_DPPM_ENABLED         (0x10)
+#define PMIC_DPPM_DISABLED        (0x20)
 
 void pmic_init(void);
 void pmic_disable(void);
@@ -36,5 +38,7 @@ void pmic_clear_interrupts(void);
 bool pmic_toggle_charging(void);
 bool pmic_turn_on_charging(void);
 bool pmic_turn_off_charging(void);
+bool pmic_enable_dynamic_ppm(void);
+bool pmic_disable_dynamic_ppm(void);
 
 #endif
