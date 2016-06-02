@@ -133,6 +133,7 @@ static void twi_init()
  */
 int main(void)
 {
+		uint8_t ret;
    // int a = __GNUC__, c = __GNUC_PATCHLEVEL__;
     if (use_event_handler) {
       twi_init_with_handler();
@@ -143,9 +144,13 @@ int main(void)
     }
     pmic_init();
     SEGGER_RTT_WriteString(0, "PMIC INIT\n");
-    nrf_delay_us(500);
+    nrf_delay_us(2500);  //Long delay to simulate other parts of init missing in this example
     haptics_init();
-    SEGGER_RTT_WriteString(0, "HAPTICS INIT\n");
+		SEGGER_RTT_WriteString(0, "HAPTICS INIT\n");
+		nrf_delay_us(500);
+		ret = haptics_test_cal_diags(); //move auto cal to separate function and run diagnostics
+    SEGGER_RTT_WriteString(0, "HAPTICS AUTOCAL AND DIAG\n");
+		SEGGER_RTT_printf(0, "LRA diagnostics return value: %02x\n", ret);
     //pmic_turn_on_charging();
 		nrf_delay_ms(2000);  //delay to feel difference between haptics init and first test run
      if (pmic_is_charging()) {

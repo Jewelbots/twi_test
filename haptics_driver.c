@@ -8,7 +8,7 @@ void haptics_init(void)
 {
 	Haptics_Init();
 	Haptics_SetActuator(ACTUATOR_LRA);
-	Haptics_RunAutoCal_LRA();
+	//Haptics_RunAutoCal_LRA();
 }
 
 unsigned char haptics_test_cal_diags(void)
@@ -17,7 +17,7 @@ unsigned char haptics_test_cal_diags(void)
 	Haptics_RunAutoCal_LRA();
 
 	ret = Haptics_Diagnostics(ACTUATOR_LRA);
-	ret = (ret & 0x8) >> 3;
+	//ret = (ret & 0x8) >> 3;  //And to only get at one specific bit, comment out to see all bits for diagnosis
 	return ret;
 }
 
