@@ -46,12 +46,6 @@ static bool pmic_driver_write_reg(uint8_t reg, uint8_t data)
 
 void pmic_init()
 {
-#ifdef SIMULATE_CHARGING
-  return;
-#endif
-#ifdef SIMULATE_BATTERY
-  return;
-#endif
   //pmic_turn_off_charging();
 	bool success;
 	uint8_t val = 0;
