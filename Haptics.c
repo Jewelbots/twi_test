@@ -40,17 +40,10 @@ extern nrf_drv_twi_t app_twi_instance;
 
 static bool I2C_WriteSingleByte(uint8_t regstr, uint8_t data)
 {
-//
-//NRF_TWI_Type     * p_reg;       /**< Pointer to the instance register set. */
- //   IRQn_Type          irq;         /**< Instance IRQ ID. */
-  //  uint8_t            instance_id; /**< Instance index. */
 	uint8_t writeData[2];
-  
 	writeData[0] = regstr;
 	writeData[1] = data;
-  //SEGGER_RTT_printf(0, "Register: %02x, data, %02x\n", regstr, data);
 	ret_code_t err_code = nrf_drv_twi_tx(&app_twi_instance, DRV2604_I2C_ADDRESS, writeData, 2, false);
-  //SEGGER_RTT_printf(0, "%u", err_code);
   APP_ERROR_CHECK(err_code);
 	return (err_code == NRF_SUCCESS);
 }
@@ -59,7 +52,6 @@ static bool I2C_WriteMultiByte(uint8_t * data, uint16_t len)
 {
 	ret_code_t err_code = nrf_drv_twi_tx(&app_twi_instance, DRV2604_I2C_ADDRESS, data, len, false);
 	APP_ERROR_CHECK(err_code);
-  //SEGGER_RTT_printf(0, "%u", err_code);
 	return (NRF_SUCCESS == err_code);
 }
 
@@ -81,56 +73,44 @@ static uint8_t I2C_ReadSingleByte( uint8_t regstr )
 void Haptics_Init(void)
 {
 	tickdelay = (unsigned int) TICKDELAY;
-	nrf_gpio_pin_clear(DRV2604_ENABLE_PIN);  // initialize enable pin to output and low
+	nrf_gpio_pin_clear(DRV2604_ENABLE_PIN);           // initialize enable pin to output and low
 	nrf_gpio_cfg_output(DRV2604_ENABLE_PIN);
 
 
 	// Set DRV260x Hardware Controls
-	Haptics_EnableAmplifier();							// Enable the DRV260x
-	Haptics_LoadSwitchSelect(ACTUATOR_LRA);     		// Select ERM using load switch
+	Haptics_EnableAmplifier();							          // Enable the DRV260x
+	Haptics_LoadSwitchSelect(ACTUATOR_LRA);     		  // Select ERM using load switch
   
 	// DRV260x Initialization
-  //SEGGER_RTT_WriteString(0, "a");
+  
   nrf_delay_us(500);
-	//I2C_WriteSingleByte(DRV260x_MODE, ACTIVE);    		// Exit STANDBY
+	//I2C_WriteSingleByte(DRV260x_MODE, ACTIVE);    	// Exit STANDBY
   //nrf_delay_us(500);
   I2C_WriteSingleByte(DRV260x_MODE, Dev_Reset);
   nrf_delay_us(500);
   I2C_WriteSingleByte(DRV260x_MODE, ACTIVE);    		// Exit STANDBY
   nrf_delay_us(500);
-  //SEGGER_RTT_WriteString(0, "b");
-	I2C_WriteSingleByte(DRV260x_RTP, 0x00);				// Set RTP register to zero, prevent playback
-  //SEGGER_RTT_WriteString(0, "c");
+  
+	I2C_WriteSingleByte(DRV260x_RTP, 0x00);				    // Set RTP register to zero, prevent playback
 	I2C_WriteSingleByte(DRV260x_WAVEFORMSEQ1, 0x01);	// Insert waveform 1 into sequence register 1
-  //SEGGER_RTT_WriteString(0, "d");
 	I2C_WriteSingleByte(DRV260x_WAVEFORMSEQ2, 0x00);	// Insert termination character in sequence register 2
-  //SEGGER_RTT_WriteString(0, "e");
-	I2C_WriteSingleByte(DRV260x_ODT, 0x00);				// Set Library Overdrive time to zero
-  //SEGGER_RTT_WriteString(0, "f");
-	I2C_WriteSingleByte(DRV260x_SPT, 0x00);				// Set Library Sustain positive time
-  //SEGGER_RTT_WriteString(0, "g");
-	I2C_WriteSingleByte(DRV260x_SNT, 0x00);				// Set Library Sustain negative time
-  //SEGGER_RTT_WriteString(0, "h");
-	I2C_WriteSingleByte(DRV260x_BRT, 0x00);				// Set Library Brake Time
-  //SEGGER_RTT_WriteString(0, "i");
-	I2C_WriteSingleByte(0x13, 0x64);  					// A2H Vpeak maximum
-  //SEGGER_RTT_WriteString(0, "j");
+	I2C_WriteSingleByte(DRV260x_ODT, 0x00);				    // Set Library Overdrive time to zero
+	I2C_WriteSingleByte(DRV260x_SPT, 0x00);				    // Set Library Sustain positive time
+	I2C_WriteSingleByte(DRV260x_SNT, 0x00);				    // Set Library Sustain negative time
+	I2C_WriteSingleByte(DRV260x_BRT, 0x00);				    // Set Library Brake Time
+	I2C_WriteSingleByte(0x13, 0x64);  					      // A2H Vpeak maximum
+  
 
 #if DRV2604
 	// Load header into RAM
 	I2C_WriteSingleByte(DRV2604_RAMADDR_UB, 0x00);
-  //SEGGER_RTT_WriteString(0, "k");
 	I2C_WriteSingleByte(DRV2604_RAMADDR_LB, 0x00);
-  //SEGGER_RTT_WriteString(0, "l");
 	I2C_WriteMultiByte((unsigned char*) DRV2604_HEADER, DRV2604_HEADERSIZE);	// Send header data
-  //SEGGER_RTT_WriteString(0, "m");
 	// Load waveform data into RAM
 	I2C_WriteSingleByte(DRV2604_RAMADDR_UB, 0x01);
-  //SEGGER_RTT_WriteString(0, "n");
 	I2C_WriteSingleByte(DRV2604_RAMADDR_LB, 0x00);
-  //SEGGER_RTT_WriteString(0, "o");
 	I2C_WriteMultiByte((unsigned char*) DRV2604_DATA, DRV2604_DATASIZE);		// Send waveform data
-  //SEGGER_RTT_WriteString(0, "p");
+  
 #endif
 
 	Haptics_SetControlRegisters();		// Set control register values
@@ -387,7 +367,9 @@ void Haptics_SendWaveform(const Waveform waveform, const uint8_t actuator, const
 		Haptics_DisableTriggerActive();				// Stop waveform playback
 
 		Haptics_OutputWaveform(waveform);			// Send waveform data to driver
-
+    uint8_t reg = DRV260x_VBAT;
+    uint8_t data = I2C_ReadSingleByte(reg);
+    SEGGER_RTT_printf(0, "Haptics battery voltage is: %02x\n", data);
 		/* Stop PWM and RTP output when finished */
 		if(waveform.inputMode == MODE_PWM || waveform.inputMode == MODE_RTP) {
 			Haptics_Stop(waveform.inputMode);

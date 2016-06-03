@@ -32,18 +32,18 @@
 #define DEFAULT_CTRL3	NGThresh_4PERCENT | ERM_ClosedLoop | DataFormat_RTP_Signed | LRADriveMode_Once | InputMode_PWM | LRA_AutoResonance
 
 // DRV2605 Input Modes
-#define MODE_RAM				0	// RAM Playback Mode
-#define MODE_ROM				1	// ROM Playback Mode (Reserved for DRV2605)
-#define MODE_PWM				2	// PWM Playback Mode
-#define MODE_RTP				3	// RTP Real-Time Playback Mode
-#define MODE_ANALOG				4	// Analog Input Mode
-#define MODE_A2H				5	// Audio-to-Haptics Mode
-#define MODE_DEFAULT			6   // Special RAM mode
+#define MODE_RAM				0	    // RAM Playback Mode
+#define MODE_ROM				1	    // ROM Playback Mode (Reserved for DRV2605)
+#define MODE_PWM				2	    // PWM Playback Mode
+#define MODE_RTP				3	    // RTP Real-Time Playback Mode
+#define MODE_ANALOG			4	    // Analog Input Mode
+#define MODE_A2H				5	    // Audio-to-Haptics Mode
+#define MODE_DEFAULT	  6     // Special RAM mode
 
 // DRV260x Trigger Modes
-#define TRIGGER_INTERNAL		0	// Internal trigger mode
-#define TRIGGER_EXTERNAL_EDGE	1	// External trigger, Edge mode
-#define TRIGGER_EXTERNAL_LEVEL	2	// External trigger, Level mode
+#define TRIGGER_INTERNAL		    0	  // Internal trigger mode
+#define TRIGGER_EXTERNAL_EDGE	  1   // External trigger, Edge mode
+#define TRIGGER_EXTERNAL_LEVEL	2	  // External trigger, Level mode
      
 // DRV260x Actuator
 #define ACTUATOR_ERM			0
