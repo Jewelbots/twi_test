@@ -15,6 +15,7 @@
 #include "app_util_platform.h"
 #include "nrf_delay.h"
 #include "nrf_gpio.h"
+//#include "SEGGER_RTT.h"
 
 /**@brief Determine how long driver will be wait for event (in blocking mode). */
 #define BUSY_LOOP_TIMEOUT   0xFFF
@@ -424,9 +425,23 @@ static bool twi_action_wait(nrf_drv_twi_t const * const p_instance)
     do
     {
         done  = nrf_twi_event_check(p_instance->p_reg, p_transfer->end_event);
+        /*if (done) {
+          //SEGGER_RTT_WriteString(0, "***\n");
+        }
+        else {
+          SEGGER_RTT_WriteString(0, ".");
+        }
+        SEGGER_RTT_printf(0, "p_instance->p_reg EVENTS_ERROR is: %08x\n", p_instance->p_reg->EVENTS_ERROR);
+        SEGGER_RTT_printf(0, "p_instance->p_reg ERRORSRC is: %08x\n", p_instance->p_reg->ERRORSRC);
+        SEGGER_RTT_printf(0, "p_instance->p_reg EVENTS_TXDSENT is: %08x\n", p_instance->p_reg->EVENTS_TXDSENT);
+        */
         error = nrf_twi_event_check(p_instance->p_reg, NRF_TWI_EVENTS_ERROR);
         error |= (++timeout < BUSY_LOOP_TIMEOUT) ? false : true;
     } while (!(error | done));
+    /*
+    SEGGER_RTT_printf(0, "twi error is: %u\n", error);
+    SEGGER_RTT_printf(0, "timeout achieved was: %08x\n", timeout);
+    */
     return !error;
 }
 
@@ -492,7 +507,7 @@ static ret_code_t twi_transfer(nrf_drv_twi_t const * const p_instance,
 {
     ASSERT(m_cb[p_instance->instance_id].state == NRF_DRV_STATE_POWERED_ON);
     ASSERT(length > 0);
-
+    //SEGGER_RTT_printf(0, "state: %u\n", m_cb[p_instance->instance_id].state);
     control_block_t * p_cb = &m_cb[p_instance->instance_id];
 
     bool is_busy = false;
@@ -521,15 +536,17 @@ static ret_code_t twi_transfer(nrf_drv_twi_t const * const p_instance,
     p_transfer->error_condition = false;
 
     state_machine(p_instance, p_transfer->is_tx ? TX_ADDR_REQ : RX_ADDR_REQ);
-
+    //SEGGER_RTT_printf(0, "is tx?: %u\n", p_transfer->is_tx);
     if (!m_handlers[p_instance->instance_id])
     {
         // blocking mode
         sm_evt_t evt = p_transfer->is_tx ? TX_DONE : RX_DONE;
+        //SEGGER_RTT_printf(0, "blocking mode: is_tx?: %u\n", p_transfer->is_tx);
         do
         {
             if (twi_action_wait(p_instance) == false)
             {
+                //SEGGER_RTT_WriteString(0, "error here.\n");
                 nrf_twi_event_clear(p_instance->p_reg, NRF_TWI_EVENTS_ERROR);
                 evt = ON_ERROR;
             }
@@ -539,6 +556,7 @@ static ret_code_t twi_transfer(nrf_drv_twi_t const * const p_instance,
             if (p_transfer->error_condition)
             {
                 p_cb->transfer_in_progress = false;
+                //SEGGER_RTT_WriteString(0, "internal error. :-(\n");
                 return NRF_ERROR_INTERNAL;
             }
         }
