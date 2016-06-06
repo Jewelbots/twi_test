@@ -3,12 +3,16 @@
 #include "Actuator_Waveforms.h"
 #include "pmic_driver.h"
 #include "nrf_delay.h"
+#include "SEGGER_RTT.h"
 
 void haptics_init(void)
 {
 	Haptics_Init();
 	Haptics_SetActuator(ACTUATOR_LRA);
-	//Haptics_RunAutoCal_LRA();
+	Haptics_RunAutoCal_LRA();
+	uint8_t ret;
+	ret = Haptics_Diagnostics(ACTUATOR_LRA);
+	UNUSED_VARIABLE(ret);
 }
 
 unsigned char haptics_test_cal_diags(void)

@@ -8,6 +8,9 @@
 
 #define PMIC_REG_CHGSTATUS		    (0x01)
 #define PMIC_REG_CHGCONFIG0       (0x02)
+#define PMIC_REG_CHGCONFIG1       (0x03)
+#define PMIC_REG_CHGCONFIG2       (0x04)
+#define PMIC_REG_CHGCONFIG3       (0x05)
 #define PMIC_REG_DEFDCDC1         (0x07)
 
 #define PMIC_CONTROL1_REG         (0x0A)
@@ -21,6 +24,7 @@
 #define PMIC_5V_PRESENT_MASK	    (0x04)
 #define PMIC_CHARGING_MASK		    (0x08)
 #define PMIC_DCDC1_ENABLE_MASK    (0x80)
+#define PMIC_DCDC1_VOLT_MASK			(0x29)
 #define PMIC_CH_EN_MASK           (0x00)
 
 

@@ -174,6 +174,8 @@ all eight identifiers are played (register addresses 0x04 through 0x0B), whichev
 // LRA Rated Voltage - Closed Loop
 #define VoltageRMS_LRA_RV_1p5	(0x3E)	// 1.5 Vrms
 #define VoltageRMS_LRA_RV_2p0	(0x53)	// 2.0 Vrms
+//Jewelbots LRA motor is smaller and higher frequency so new value needed
+#define VoltageRMS_LRA_RV_1p8	(0x38)	// 1.8 Vrms @ 235 Hz
 
 /****************************************************************************/
 /* OverDrive Clamp Voltage Register */
@@ -310,6 +312,7 @@ all eight identifiers are played (register addresses 0x04 through 0x0B), whichev
 
 #define ERM_ClosedLoop			(0x00)
 #define ERM_OpenLoop			(0x20)
+
 #define SupplyCompDis			(0x10)
 
 #define	DataFormat_RTP_Signed	(0x00)

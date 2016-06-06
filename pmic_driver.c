@@ -27,12 +27,7 @@ static bool pmic_driver_read_reg(uint8_t reg, uint8_t * data)
   }
 	return (err_code == NRF_SUCCESS);
 }
-/*ret_code_t nrf_drv_twi_tx(nrf_drv_twi_t const * const p_instance,
-                          uint8_t                     address,
-                          uint8_t const *             p_data,
-                          uint32_t                    length,
-                          bool                        xfer_pending);
-													*/
+
 static bool pmic_driver_write_reg(uint8_t reg, uint8_t data)
 {
 	uint8_t tmp_data[2] = { reg, data };
@@ -49,15 +44,48 @@ void pmic_init()
   //pmic_turn_off_charging();
 	bool success;
 	uint8_t val = 0;
-	success = pmic_driver_read_reg(PMIC_REG_DEFDCDC1, &val);
+	/*success = pmic_driver_read_reg(PMIC_REG_DEFDCDC1, &val);
 	if(!success) {
 		SEGGER_RTT_WriteString(0,"Error reading DCDC1 configuration!\n");
 		return;
-	}
+	} */
 
-	/* Enable DCDC1 */
+	// To do - make nice defines for all these 
+  // Configure CHGCONFIG0 register
+	val = (0x40) | (0x10) | (0x0F);
+	success = pmic_driver_write_reg(PMIC_REG_CHGCONFIG0, val);
+	if(!success) {
+		SEGGER_RTT_WriteString(0,"Error writing CHGCONFIG0 configuration!\n");
+		return;
+	}
+	
+	// Configure CHGCONFIG1 register
+	val = (0x40) | (0x30) | (0x04);
+	success = pmic_driver_write_reg(PMIC_REG_CHGCONFIG1, val);
+	if(!success) {
+		SEGGER_RTT_WriteString(0,"Error writing CHGCONFIG1 configuration!\n");
+		return;
+	}
+	
+	// Configure CHGCONFIG2 register
+	val = (0x40) | (0x08) | (0x04);
+	success = pmic_driver_write_reg(PMIC_REG_CHGCONFIG2, val);
+	if(!success) {
+		SEGGER_RTT_WriteString(0,"Error writing CHGCONFIG2 configuration!\n");
+		return;
+	}
+	
+	// Configure CHGCONFIG3 register
+	val = (0x40) | (0x01);
+	success = pmic_driver_write_reg(PMIC_REG_CHGCONFIG3, val);
+	if(!success) {
+		SEGGER_RTT_WriteString(0,"Error writing CHGCONFIG3 configuration!\n");
+		return;
+	}
+	
+	/* Configure DEFDCDC1 register*/
 	//app_trace_log("DCDC 1 Before Write %02x\n", val);
-	val |= PMIC_DCDC1_ENABLE_MASK;
+	val = PMIC_DCDC1_ENABLE_MASK | PMIC_DCDC1_VOLT_MASK;
 	success = pmic_driver_write_reg(PMIC_REG_DEFDCDC1, val);
 	if(!success) {
 		SEGGER_RTT_WriteString(0,"Error writing DCDC1 configuration!\n");

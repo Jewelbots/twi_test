@@ -19,7 +19,7 @@
 #include "nrf_drv_twi.h"
 
 #define TICKDELAY	5000
-#define LRAFREQ		LRAFREQ_230		// Set the LRA open loop frequency (see frequency constants below)
+#define LRAFREQ		LRAFREQ_235		// Set the LRA open loop frequency (see frequency constants below)
 
 // Device Select - Write "1" next to the device that is on the EVM
 #define DRV2604		1
@@ -27,7 +27,7 @@
 
 // @TODO - Set control register settings
 // Default Control Register Settings
-#define DEFAULT_CTRL1	StartupBoost | DriveTime_2p7m
+#define DEFAULT_CTRL1	StartupBoost | DC_Couple | DriveTime_2p1m
 #define DEFAULT_CTRL2	BiDir_Input| BrakeStabilizer | SampleTime_300us | BlankingTime_Short | IDissTime_Short
 #define DEFAULT_CTRL3	NGThresh_4PERCENT | ERM_ClosedLoop | DataFormat_RTP_Signed | LRADriveMode_Once | InputMode_PWM | LRA_AutoResonance
 
@@ -94,19 +94,10 @@ void Haptics_Init(void);
 void Haptics_SetControlRegisters(void);
 
 /**
- * Haptics_RunAutoCal_LRA - run auto-calibration for an ERM actuator
- */
-void Haptics_RunAutoCal_ERM(void);
-
-/**
  * Haptics_RunAutoCal_LRA - run auto-calibration for an LRA actuator
  */
 void Haptics_RunAutoCal_LRA(void);
 
-/**
- * Haptics_RecordAutoCalValues - save auto-calibration values
- */
-void Haptics_RecordAutoCalValues(uint8_t recordAutoCal);
 
 /**
  * Haptics_Diagnostics - run actuator diagnostics

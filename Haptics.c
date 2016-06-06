@@ -4,7 +4,6 @@
 #include "nrf_gpio.h"
 #include "nrf_drv_twi.h"
 #include "jewelbot.h"
-#include "ActuatorSettings.h"
 #include "app_util_platform.h"
 #include "app_error.h"
 #include "nrf_drv_twi.h"
@@ -23,13 +22,9 @@ static uint8_t 	actuatorType = ACTUATOR_LRA;		// Actuator Setting
 static uint8_t  disableAllowed = 1;					// Flag if hardware disable is allowed
 static uint8_t  IsERMOpenLoop = ERM_ClosedLoop;		// Flag for ERM Open Loop
 static uint8_t  IsLRAOpenLoop = LRA_AutoResonance;	// Flag for ERM Open Loop
-static uint8_t  useERMAutoCalValues = 0;			// Flag to use ERM auto-cal values
-static uint8_t  useLRAAutoCalValues = 0;			// Flag to use LRA auto-cal values
 
 /* DRV260x Register Variables */
-static uint8_t 	ERM_AutoCal_Comp, ERM_AutoCal_BEMF, ERM_AutoCal_FB;
 static uint8_t 	LRA_AutoCal_Comp, LRA_AutoCal_BEMF, LRA_AutoCal_FB;
-static uint8_t 	ERM_RatedVoltage, ERM_ODClamp, ERM_ODClamp_OL;
 static uint8_t 	LRA_RatedVoltage, LRA_ODClamp;
 static uint8_t 	AutoCal_Result;
 static uint8_t 	control1, control2, control3;
@@ -81,13 +76,16 @@ void Haptics_Init(void)
 	Haptics_EnableAmplifier();							          // Enable the DRV260x
 	Haptics_LoadSwitchSelect(ACTUATOR_LRA);     		  // Select ERM using load switch
   
+	nrf_delay_us(500);																// Pause after enabling
+	
+  I2C_WriteSingleByte(DRV260x_MODE, Dev_Reset);			// Internal reset function
+  nrf_delay_us(250);
+	Haptics_DisableAmplifier();												// Mode switch reset
+	nrf_delay_us(250);
+	Haptics_EnableAmplifier();
+	nrf_delay_us(250);
+	
 	// DRV260x Initialization
-  
-  nrf_delay_us(500);
-	//I2C_WriteSingleByte(DRV260x_MODE, ACTIVE);    	// Exit STANDBY
-  //nrf_delay_us(500);
-  I2C_WriteSingleByte(DRV260x_MODE, Dev_Reset);
-  nrf_delay_us(500);
   I2C_WriteSingleByte(DRV260x_MODE, ACTIVE);    		// Exit STANDBY
   nrf_delay_us(500);
   
@@ -128,93 +126,8 @@ void Haptics_SetControlRegisters()
 	control1 = DEFAULT_CTRL1;
 	control2 = DEFAULT_CTRL2;
 	control3 = DEFAULT_CTRL3;
-
-	/* @TODO - If DEFAULTCONTROLSETTINGS = 1 in ActuatorSettings.h, the program will use the
-	 * 			CRTL2 and CTRL3 #defines from ActuatorsSettings.h.  See ActuatorSettings.h for more details.
-	 *       Control Register 2: AutoResGain, BlankingTime, IDissTime
-	 *       Control Register 3: ERM_OpenLoop, LRA_DriveMode, LRA_OpenLoop		*/
-#if DEFAULTCONTROLSETTINGS
-	/* Set Control2
-	 * Equivalent: control2 = [(AutoResGain | BlankingTime | IDissTime) & LRA_CTRL2] |
-	 * 		[(BiDir_Input | Brake_Stabilizer) & control2] */
-	control2 = (0x3F & (LRA_CTRL2)) | (0xC0 & control2);
-
-	/* Set Control3
-	 * Equivalent: control3 = [(ERM_OpenLoop | LRA_DriveMode | LRA_OpenLoop) & (ERM_CTRL3 | LRA_CTRL3)] |
-	 * 		[(NG_Thresh | SupplyCompDis | DataFormat_RTP | nPWM_Analog) & control3] */
-	control3 = (0x25 & (ERM_CTRL3 | LRA_CTRL3)) | (0xDA & control3);
-#endif
-
-	ERMDefaultOpenLoopSetting = control3 & ERM_OpenLoop;	// Store ERM open-loop bit
-	LRADefaultOpenLoopSetting = control3 & LRA_OpenLoop;	// Store LRA open-loop bit
 }
 
-/**
- * Haptics_RunAutoCal_LRA - run auto-calibration for an ERM actuator
- */
-void Haptics_RunAutoCal_ERM(void)
-{
-	//unsigned char i;
-
-	/* Set Hardware Control */
-	Haptics_EnableAmplifier();
-	Haptics_LoadSwitchSelect(ACTUATOR_ERM);
-
-	/* Load settings from ActuatorSettings.h */
-	ERM_AutoCal_FB = ERM_AUTOCAL_FB;
-	ERM_AutoCal_Comp = ERM_AUTOCAL_COMP;
-	ERM_AutoCal_BEMF = ERM_AUTOCAL_BEMF;
-	ERM_RatedVoltage = ERM_RATED_VOLTAGE;
-	ERM_ODClamp = ERM_OVERDRIVE_VOLTAGE;
-	ERM_ODClamp_OL = ERM_OVERDRIVE_OL;
-
-	/* Set DRV260x Control Registers */
-	I2C_WriteSingleByte(DRV260x_RATED_VOLTAGE, ERM_RatedVoltage);
-	I2C_WriteSingleByte(DRV260x_OD_CLAMP, ERM_ODClamp);
-	I2C_WriteSingleByte(DRV260x_FEEDBACK_CONTROL, ERM_AutoCal_FB);
-	I2C_WriteSingleByte(DRV260x_CONTROL1, control1);
-	I2C_WriteSingleByte(DRV260x_CONTROL2, control2);
-	I2C_WriteSingleByte(DRV260x_CONTROL3, control3);
-
-	/* Run AutoCal ERM */
-	I2C_WriteSingleByte(DRV260x_MODE, Auto_Calibration);
-	I2C_WriteSingleByte(DRV260x_AUTOCAL_MEMIF, AutoCalTime_500MS);
-	I2C_WriteSingleByte(DRV260x_GO, GO);
-
-	// Poll GO bit until it AutoCal is finished
-	nrf_delay_us(50000);
-	while(I2C_ReadSingleByte(DRV260x_GO) == GO) {
-		nrf_delay_us(50000);
-	}
-
-#if AUTOCALRESULTS_ERM		/* Use auto-calibration results */
-	useERMAutoCalValues = 1;
-#endif
-
-	if(useERMAutoCalValues) {	/* Use auto-calibration results */
-		ERM_AutoCal_Comp 	= I2C_ReadSingleByte(DRV260x_AUTOCAL_COMP);
-		ERM_AutoCal_BEMF 	= I2C_ReadSingleByte(DRV260x_AUTOCAL_BEMF);
-		ERM_AutoCal_FB 		= I2C_ReadSingleByte(DRV260x_FEEDBACK_CONTROL);
-	}
-
-	/* Check if AutoCal was Successful */
-	AutoCal_Result = I2C_ReadSingleByte(DRV260x_STATUS);	// Check Status Register
-	AutoCal_Result = (AutoCal_Result & 0x08) >> 3;
-
-	/* 500 ms delay */
-	nrf_delay_us(500000);
-
-#if 0 // XXX
-	if(AutoCal_Result) {
-		CapTouch_FlashModeLEDs(3);    // Auto-cal Fail
-	} else {
-		CapTouch_FlashModeLEDs(1);    // Auto-cal Pass
-	}
-#endif
-
-	I2C_WriteSingleByte(DRV260x_MODE, ACTIVE | Int_Trig);	// Set to int. trigger mode
-	Haptics_DisableAmplifier();
-}
 
 /**
  * Haptics_RunAutoCal_LRA - run auto-calibration for an LRA actuator
@@ -226,6 +139,11 @@ void Haptics_RunAutoCal_LRA(void)
 
 
 	/* Store settings from ActuatorSettings.h in variables for reuse */
+	#define LRA_AUTOCAL_COMP 		0x08					// Compensation Coef.
+	#define	LRA_AUTOCAL_BEMF 		0xB9					// BEMF Coef.
+	#define LRA_AUTOCAL_FB 			0xB5					// Feedback Control
+	#define LRA_RATED_VOLTAGE		VoltageRMS_LRA_RV_1p8	// Rated voltage
+	#define LRA_OVERDRIVE_VOLTAGE	Voltage_3p0				// Overdrive voltage
 	LRA_AutoCal_FB = LRA_AUTOCAL_FB;
 	LRA_AutoCal_Comp = LRA_AUTOCAL_COMP;
 	LRA_AutoCal_BEMF = LRA_AUTOCAL_BEMF;
@@ -250,40 +168,22 @@ void Haptics_RunAutoCal_LRA(void)
 	while(I2C_ReadSingleByte(DRV260x_GO) == GO) {
 		nrf_delay_us(50000);
 	}
-#if AUTOCALRESULTS_LRA	/* Use auto-calibration results */
-	useLRAAutoCalValues = 1;
-#endif
 
-	if(useLRAAutoCalValues) {
-		LRA_AutoCal_Comp = I2C_ReadSingleByte(DRV260x_AUTOCAL_COMP);
-		LRA_AutoCal_BEMF = I2C_ReadSingleByte(DRV260x_AUTOCAL_BEMF);
-		LRA_AutoCal_FB 	 = I2C_ReadSingleByte(DRV260x_FEEDBACK_CONTROL);
-	}
+	LRA_AutoCal_Comp = I2C_ReadSingleByte(DRV260x_AUTOCAL_COMP);
+	LRA_AutoCal_BEMF = I2C_ReadSingleByte(DRV260x_AUTOCAL_BEMF);
+	LRA_AutoCal_FB 	 = I2C_ReadSingleByte(DRV260x_FEEDBACK_CONTROL);
+	
 
 	/* Check if AutoCal was Successful */
 	AutoCal_Result = I2C_ReadSingleByte(DRV260x_STATUS);
 	AutoCal_Result = (AutoCal_Result & 0x08) >> 3;
-
-#if 0 // XXX
-	if(AutoCal_Result) {
-		CapTouch_FlashModeLEDs(3);    //Fail
-	} else {
-		CapTouch_FlashModeLEDs(1);    //Pass
-	}
-#endif
+	SEGGER_RTT_printf(0, "LRA AutoCal Result (0=passed, 1=failed): %02x\n", AutoCal_Result);
 
 	I2C_WriteSingleByte(DRV260x_MODE, ACTIVE | Int_Trig);	// Set to internal trigger mode
 	Haptics_DisableAmplifier();
 }
 
-/**
- * Haptics_RecordAutoCalValues - save auto-calibration values
- */
-void Haptics_RecordAutoCalValues(uint8_t recordAutoCal)
-{
-	useLRAAutoCalValues = 1;
-	useERMAutoCalValues = 1;
-}
+
 
 /**
  * Haptics_Diagnostics - run actuator diagnostics
@@ -309,15 +209,8 @@ unsigned char Haptics_Diagnostics(uint8_t actuator)
 	}
 
 	diagResults = I2C_ReadSingleByte(DRV260x_STATUS);	// Get status register values
-
-#if 0 // XXX
-	if((diagResults & 0x08)) {		// If fail
-		CapTouch_FlashModeLEDs(3);
-	} else {
-		CapTouch_FlashModeLEDs(1);    // Else Pass
-	}
-#endif
-
+	diagResults = (diagResults & 0x08) >> 3;
+	SEGGER_RTT_printf(0, "LRA Diagnostics Result (0=passed, 1=failed): %02x\n", diagResults);
 	Haptics_DisableAmplifier();
 
 	return diagResults;
@@ -520,30 +413,9 @@ void Haptics_SendTriggerType()
 void Haptics_SendActuatorSettings()
 {
 	/* DRV2605 Actuator Settings */
-	switch(actuatorType) {
-	case ACTUATOR_ERM: 	// ERM Mode
+	
 
-		if(IsERMOpenLoop) {	// Open Loop Mode
-			I2C_WriteSingleByte(DRV260x_OD_CLAMP, ERM_ODClamp_OL);					// Open-loop Overdrive
-			I2C_WriteSingleByte(DRV260x_CONTROL3, (control3 | ERM_OpenLoop));		// Set open-loop
-		} else {			// Closed Loop Mode
-			I2C_WriteSingleByte(DRV260x_OD_CLAMP, ERM_ODClamp);						// Closed-loop Overdrive
-			I2C_WriteSingleByte(DRV260x_CONTROL3, (control3 & ~(ERM_OpenLoop)));	// Set closed-loop
-		}
 
-		I2C_WriteSingleByte(DRV260x_RATED_VOLTAGE, ERM_RatedVoltage);
-		I2C_WriteSingleByte(DRV260x_AUTOCAL_COMP, ERM_AutoCal_Comp);
-		I2C_WriteSingleByte(DRV260x_AUTOCAL_BEMF, ERM_AutoCal_BEMF);
-		I2C_WriteSingleByte(DRV260x_FEEDBACK_CONTROL, ERM_AutoCal_FB);
-		Haptics_LoadSwitchSelect(ACTUATOR_ERM);
-		break;
-	case ACTUATOR_LRA: 	// LRA Auto-Resonance
-
-		if(IsLRAOpenLoop) {	// LRA Open-Loop (Auto-resonance OFF)
-			I2C_WriteSingleByte(DRV260x_CONTROL3, (control3 | LRA_OpenLoop));    // Set open-loop
-		} else {			// LRA Auto-resonance ON
-			I2C_WriteSingleByte(DRV260x_CONTROL3, (control3 & ~(LRA_OpenLoop)));    // Set closed-loop
-		}
 
 		I2C_WriteSingleByte(DRV260x_RATED_VOLTAGE, LRA_RatedVoltage);
 		I2C_WriteSingleByte(DRV260x_OD_CLAMP, LRA_ODClamp);
@@ -551,11 +423,7 @@ void Haptics_SendActuatorSettings()
 		I2C_WriteSingleByte(DRV260x_AUTOCAL_BEMF, LRA_AutoCal_BEMF);
 		I2C_WriteSingleByte(DRV260x_FEEDBACK_CONTROL, LRA_AutoCal_FB);
 		Haptics_LoadSwitchSelect(ACTUATOR_LRA);
-		break;
-	default:
-		;
-		// XXX __no_operation();
-	}
+		
 }
 
 /**
@@ -810,7 +678,6 @@ uint8_t Haptics_IsEffectActive(void)
  */
 void Haptics_EnableAmplifier(void)
 {
-// XXX	P3OUT |= 0x03;                	// Enable Amplifier
 	nrf_gpio_pin_set(DRV2604_ENABLE_PIN);
 }
 
@@ -819,10 +686,7 @@ void Haptics_EnableAmplifier(void)
  */
 void Haptics_DisableAmplifier(void)
 {
-	if(Haptics_IsDisableAllowed()) {
 		nrf_gpio_pin_clear(DRV2604_ENABLE_PIN);
-	}
-// XXX		P3OUT &= 0xF8;             		// Disable Amplifier, Clear Trigger, Clear EN LED
 }
 
 /**
