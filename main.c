@@ -99,7 +99,7 @@ void twi_init_with_handler (void)
     const nrf_drv_twi_config_t twi_config = {
        .scl                = I2C_SCL,
        .sda                = I2C_SDA,
-       .frequency          = NRF_TWI_FREQ_400K,
+       .frequency          = NRF_TWI_FREQ_100K,
        .interrupt_priority = APP_IRQ_PRIORITY_HIGH
     };
     

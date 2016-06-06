@@ -249,17 +249,17 @@ void Haptics_SendWaveformDefault(const Waveform waveform)
 void Haptics_SendWaveform(const Waveform waveform, const uint8_t actuator, const uint8_t trigger)
 {
 	if(playEffect) {
-		actuatorType = actuator;					// Set actuator type
-		triggerType = trigger;						// Set trigger type
+		actuatorType = actuator;					            // Set actuator type
+		triggerType = trigger;						            // Set trigger type
 
-		Haptics_Start(waveform.inputMode);			// Enable the amplifier, begin PWM (if required)
-		Haptics_HardwareMode(waveform.inputMode);	// Configure the Hardware (load switch, GPIOs)
-		Haptics_SendTriggerType();					// Send trigger type to DRV260x
-		Haptics_SendActuatorSettings();				// Send actuator settings to DRV260x
+		Haptics_Start(waveform.inputMode);			      // Enable the amplifier, begin PWM (if required)
+		Haptics_HardwareMode(waveform.inputMode);	    // Configure the Hardware (load switch, GPIOs)
+		Haptics_SendTriggerType();					          // Send trigger type to DRV260x
+		Haptics_SendActuatorSettings();				        // Send actuator settings to DRV260x
 
-		Haptics_DisableTriggerActive();				// Stop waveform playback
+		Haptics_DisableTriggerActive();				        // Stop waveform playback
 
-		Haptics_OutputWaveform(waveform);			// Send waveform data to driver
+		Haptics_OutputWaveform(waveform);			        // Send waveform data to driver
     uint8_t reg = DRV260x_VBAT;
     uint8_t data = I2C_ReadSingleByte(reg);
     SEGGER_RTT_printf(0, "Haptics battery voltage is: %02x\n", data);

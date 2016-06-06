@@ -30,6 +30,8 @@
 #define DEFAULT_CTRL1	StartupBoost | DC_Couple | DriveTime_2p1m
 #define DEFAULT_CTRL2	BiDir_Input| BrakeStabilizer | SampleTime_300us | BlankingTime_Short | IDissTime_Short
 #define DEFAULT_CTRL3	NGThresh_4PERCENT | ERM_ClosedLoop | DataFormat_RTP_Signed | LRADriveMode_Once | InputMode_PWM | LRA_AutoResonance
+#define DEFAULT_CTRL4 
+#define DEFAULT_CTRL5
 
 // DRV2605 Input Modes
 #define MODE_RAM				0	    // RAM Playback Mode
