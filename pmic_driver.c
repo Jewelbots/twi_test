@@ -41,6 +41,9 @@ static bool pmic_driver_write_reg(uint8_t reg, uint8_t data)
 
 void pmic_init()
 {
+#ifndef REAL_JEWELBOT
+return;
+#endif
   //pmic_turn_off_charging();
 	bool success;
 	uint8_t val = 0;
@@ -50,39 +53,43 @@ void pmic_init()
 		return;
 	} */
 
-	// To do - make nice defines for all these 
+	// To do - make nice defines for all these
   // Configure CHGCONFIG0 register
-	val = (0x40) | (0x10) | (0x0F);
+	// set: 0x40 = Vsys to 4.4V | 0x20 = 500 mA input current, input DPPM disabled | 0xF = default settings
+	val = (0x40) | (0x20) | (0x0F);
 	success = pmic_driver_write_reg(PMIC_REG_CHGCONFIG0, val);
 	if(!success) {
 		SEGGER_RTT_WriteString(0,"Error writing CHGCONFIG0 configuration!\n");
 		return;
 	}
-	
+
 	// Configure CHGCONFIG1 register
-	val = (0x40) | (0x30) | (0x04);
+	// set:  0x40 = default precharge current | 0x00 = reduced current scaling | 0x4 = default current termination
+	val = (0x40) | (0x00) | (0x04);
 	success = pmic_driver_write_reg(PMIC_REG_CHGCONFIG1, val);
 	if(!success) {
 		SEGGER_RTT_WriteString(0,"Error writing CHGCONFIG1 configuration!\n");
 		return;
 	}
-	
+
 	// Configure CHGCONFIG2 register
+	// set:  0x40 = default safety timer | 0x08 = default sensor resistance | 0x04 = default - DPPM @ 4.3V
 	val = (0x40) | (0x08) | (0x04);
 	success = pmic_driver_write_reg(PMIC_REG_CHGCONFIG2, val);
 	if(!success) {
 		SEGGER_RTT_WriteString(0,"Error writing CHGCONFIG2 configuration!\n");
 		return;
 	}
-	
+
 	// Configure CHGCONFIG3 register
+	// set:  0x40 = default charging voltage | 0x01 = disable battery comp (not used for rechargeable battery)
 	val = (0x40) | (0x01);
 	success = pmic_driver_write_reg(PMIC_REG_CHGCONFIG3, val);
 	if(!success) {
 		SEGGER_RTT_WriteString(0,"Error writing CHGCONFIG3 configuration!\n");
 		return;
 	}
-	
+
 	/* Configure DEFDCDC1 register*/
 	//app_trace_log("DCDC 1 Before Write %02x\n", val);
 	val = PMIC_DCDC1_ENABLE_MASK | PMIC_DCDC1_VOLT_MASK;
@@ -91,15 +98,15 @@ void pmic_init()
 		SEGGER_RTT_WriteString(0,"Error writing DCDC1 configuration!\n");
 		return;
 	}
-  
-  
+
+
 	val = ~(PMIC_CH_PGOOD | PMIC_CH_ACTIVE);  // enable interrupts for CH_PGOOD and CH_ACTIVE
 	success = pmic_driver_write_reg(PMIC_REG_IRMASK0, val);
 	if(!success) {
 		SEGGER_RTT_WriteString(0,"Error writing PMIC_REG_IRMASK0 configuration!\n");
 		return;
 	}
-  
+
   //uint8_t chgcfg0_val;
   //pmic_enable_dynamic_ppm();
 	// Read and print out all registers, are they what we think?
@@ -114,7 +121,7 @@ void pmic_init()
 			SEGGER_RTT_printf(0, "PMIC read register: %u.  Value was:  %02x\n", reg_num, val);
 		}
 	}
-  
+
 	pmic_clear_interrupts();
 }
 
@@ -189,31 +196,23 @@ bool pmic_5V_present(void)
 }
 
 bool pmic_toggle_charging() {
-  uint8_t success;
+	uint8_t success;
   uint8_t val = 0;
-  
-  SEGGER_RTT_WriteString(0, "Toggle Charging\n");
-  success = pmic_driver_read_reg(PMIC_REG_CHGCONFIG0, &val);
-  SEGGER_RTT_printf(0, "CHGCONFIG0 val after read is: %02x\n", val);
-  if (!success) {
-    SEGGER_RTT_WriteString(0, "failed to read CHGCONFIG0 register!\n");
-    return false;
-  }
-  val = val ^ (1<<0);
-  SEGGER_RTT_printf(0, "CHGCONFIG0 val after change is: %02x\n", val);
-  success = pmic_driver_write_reg(PMIC_REG_CHGCONFIG0, val);
-  if (!success) {
-    SEGGER_RTT_WriteString(0, "failed to write CHGCONFIG0 register!\n");
-    return false;
-  }
-  return true;
-  
-  //success = pmic_driver_write_reg(PMIC_REG_CHGCONFIG0, 
+
+  val = (0x80) | (0x20) | (0x0F);
+	success = pmic_driver_write_reg(PMIC_REG_CHGCONFIG0, val);
+	if(!success) {
+		SEGGER_RTT_WriteString(0,"Error writing CHGCONFIG0 configuration!\n");
+		return false;
+	}
+	return true;
+
+  //success = pmic_driver_write_reg(PMIC_REG_CHGCONFIG0,
 }
 bool pmic_turn_off_charging() {
   uint8_t success;
   uint8_t val = 0;
-  
+
   SEGGER_RTT_WriteString(0, "Toggle Charging\n");
   success = pmic_driver_read_reg(PMIC_REG_CHGCONFIG0, &val);
   SEGGER_RTT_printf(0, "CHGCONFIG0 val after read is: %02x\n", val);
@@ -235,7 +234,7 @@ bool pmic_turn_off_charging() {
 bool pmic_turn_on_charging() {
   uint8_t success;
   uint8_t val = 0;
-  
+
   SEGGER_RTT_WriteString(0, "Toggle Charging\n");
   success = pmic_driver_read_reg(PMIC_REG_CHGCONFIG0, &val);
   SEGGER_RTT_printf(0, "CHGCONFIG0 val after read is: %02x\n", val);
@@ -274,7 +273,7 @@ bool pmic_enable_dynamic_ppm(void) {
     return false;
   }
   return true;
-  
+
 }
 
 bool pmic_disable_dynamic_ppm(void) {

@@ -74,21 +74,21 @@ void Haptics_Init(void)
 
 	// Set DRV260x Hardware Controls
 	Haptics_EnableAmplifier();							          // Enable the DRV260x
-	Haptics_LoadSwitchSelect(ACTUATOR_LRA);     		  // Select ERM using load switch
-  
+	//Haptics_LoadSwitchSelect(ACTUATOR_LRA);     		  // Select ERM using load switch
+
 	nrf_delay_us(500);																// Pause after enabling
-	
+
   I2C_WriteSingleByte(DRV260x_MODE, Dev_Reset);			// Internal reset function
   nrf_delay_us(250);
 	Haptics_DisableAmplifier();												// Mode switch reset
 	nrf_delay_us(250);
 	Haptics_EnableAmplifier();
 	nrf_delay_us(250);
-	
+
 	// DRV260x Initialization
   I2C_WriteSingleByte(DRV260x_MODE, ACTIVE);    		// Exit STANDBY
   nrf_delay_us(500);
-  
+
 	I2C_WriteSingleByte(DRV260x_RTP, 0x00);				    // Set RTP register to zero, prevent playback
 	I2C_WriteSingleByte(DRV260x_WAVEFORMSEQ1, 0x01);	// Insert waveform 1 into sequence register 1
 	I2C_WriteSingleByte(DRV260x_WAVEFORMSEQ2, 0x00);	// Insert termination character in sequence register 2
@@ -97,7 +97,7 @@ void Haptics_Init(void)
 	I2C_WriteSingleByte(DRV260x_SNT, 0x00);				    // Set Library Sustain negative time
 	I2C_WriteSingleByte(DRV260x_BRT, 0x00);				    // Set Library Brake Time
 	I2C_WriteSingleByte(0x13, 0x64);  					      // A2H Vpeak maximum
-  
+
 
 #if DRV2604
 	// Load header into RAM
@@ -108,7 +108,7 @@ void Haptics_Init(void)
 	I2C_WriteSingleByte(DRV2604_RAMADDR_UB, 0x01);
 	I2C_WriteSingleByte(DRV2604_RAMADDR_LB, 0x00);
 	I2C_WriteMultiByte((unsigned char*) DRV2604_DATA, DRV2604_DATASIZE);		// Send waveform data
-  
+
 #endif
 
 	Haptics_SetControlRegisters();		// Set control register values
@@ -172,7 +172,7 @@ void Haptics_RunAutoCal_LRA(void)
 	LRA_AutoCal_Comp = I2C_ReadSingleByte(DRV260x_AUTOCAL_COMP);
 	LRA_AutoCal_BEMF = I2C_ReadSingleByte(DRV260x_AUTOCAL_BEMF);
 	LRA_AutoCal_FB 	 = I2C_ReadSingleByte(DRV260x_FEEDBACK_CONTROL);
-	
+
 
 	/* Check if AutoCal was Successful */
 	AutoCal_Result = I2C_ReadSingleByte(DRV260x_STATUS);
@@ -413,7 +413,7 @@ void Haptics_SendTriggerType()
 void Haptics_SendActuatorSettings()
 {
 	/* DRV2605 Actuator Settings */
-	
+
 
 
 
@@ -423,7 +423,7 @@ void Haptics_SendActuatorSettings()
 		I2C_WriteSingleByte(DRV260x_AUTOCAL_BEMF, LRA_AutoCal_BEMF);
 		I2C_WriteSingleByte(DRV260x_FEEDBACK_CONTROL, LRA_AutoCal_FB);
 		Haptics_LoadSwitchSelect(ACTUATOR_LRA);
-		
+
 }
 
 /**
@@ -598,7 +598,7 @@ void Haptics_DefaultReset()
 	I2C_WriteSingleByte(DRV260x_CONTROL1, control1);
 	I2C_WriteSingleByte(DRV260x_CONTROL2, control2);
 	I2C_WriteSingleByte(DRV260x_CONTROL3, control3);
-  
+
   Haptics_DisableAmplifier();
 }
 
