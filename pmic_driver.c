@@ -52,38 +52,52 @@ return;
 		SEGGER_RTT_WriteString(0,"Error reading DCDC1 configuration!\n");
 		return;
 	} */
-
+#define VSYS_REG_4V4                  (0x40)
+#define INPUT_DPPM_DISABLED_500MA     (0x20)
+#define CHARGE_ENABLED                (0x01)
+#define TERM_EN                       (0x02)
+#define DYN_TMR_CLOCK_SPEED_REDUCED   (0x04)
+#define TH_LOOP_ENABLED               (0x08)
 	// To do - make nice defines for all these
   // Configure CHGCONFIG0 register
 	// set: 0x40 = Vsys to 4.4V | 0x20 = 500 mA input current, input DPPM disabled | 0xF = default settings
-	val = (0x40) | (0x20) | (0x0F);
+	val = VSYS_REG_4V4 | INPUT_DPPM_DISABLED_500MA | (CHARGE_ENABLED | TERM_EN | DYN_TMR_CLOCK_SPEED_REDUCED | TH_LOOP_ENABLED) ;
 	success = pmic_driver_write_reg(PMIC_REG_CHGCONFIG0, val);
 	if(!success) {
 		SEGGER_RTT_WriteString(0,"Error writing CHGCONFIG0 configuration!\n");
 		return;
 	}
 
+#define I_PRE0_PRECHARGE_CURRENT_10PERCENT                      (0x40)
+#define ICH_SCL1_SCL0_CHARGE_CURRENT_SCALING_FACTOR_25PERCENT   (0x00)
+#define I_TERM0_TERM_CURRENT_SCALING_FACTOR_10PERCENT           (0x04)
+
 	// Configure CHGCONFIG1 register
 	// set:  0x40 = default precharge current | 0x00 = reduced current scaling | 0x4 = default current termination
-	val = (0x40) | (0x00) | (0x04);
+	val = I_PRE0_PRECHARGE_CURRENT_10PERCENT | ICH_SCL1_SCL0_CHARGE_CURRENT_SCALING_FACTOR_25PERCENT | I_TERM0_TERM_CURRENT_SCALING_FACTOR_10PERCENT;
 	success = pmic_driver_write_reg(PMIC_REG_CHGCONFIG1, val);
 	if(!success) {
 		SEGGER_RTT_WriteString(0,"Error writing CHGCONFIG1 configuration!\n");
 		return;
 	}
-
+#define SFTY_TMR_CHARGE_VALUE_5H    (0x40)
+#define NTC_SENSOR_RESISTENCE_10K   (0x08)
+#define V_DPPM_VOLTAGE_43V          (0x04)
 	// Configure CHGCONFIG2 register
 	// set:  0x40 = default safety timer | 0x08 = default sensor resistance | 0x04 = default - DPPM @ 4.3V
-	val = (0x40) | (0x08) | (0x04);
+	val = SFTY_TMR_CHARGE_VALUE_5H | NTC_SENSOR_RESISTENCE_10K | V_DPPM_VOLTAGE_43V;
 	success = pmic_driver_write_reg(PMIC_REG_CHGCONFIG2, val);
 	if(!success) {
 		SEGGER_RTT_WriteString(0,"Error writing CHGCONFIG2 configuration!\n");
 		return;
 	}
+#define CH_VLTG1_SET_42V            (0x40)
+#define DEFAULT_CHARGE_VOLTAGE      CH_VLTG1_SET_42V
+#define DISABLE_BATTERY_COMPARATOR  (0x01)
 
 	// Configure CHGCONFIG3 register
 	// set:  0x40 = default charging voltage | 0x01 = disable battery comp (not used for rechargeable battery)
-	val = (0x40) | (0x01);
+	val = DEFAULT_CHARGE_VOLTAGE | DISABLE_BATTERY_COMPARATOR;
 	success = pmic_driver_write_reg(PMIC_REG_CHGCONFIG3, val);
 	if(!success) {
 		SEGGER_RTT_WriteString(0,"Error writing CHGCONFIG3 configuration!\n");
@@ -199,7 +213,9 @@ bool pmic_toggle_charging() {
 	uint8_t success;
   uint8_t val = 0;
 
-  val = (0x80) | (0x20) | (0x0F);
+#define VSYS1_SET_5V    (0x80)
+
+  val = VSYS1_SET_5V | INPUT_DPPM_DISABLED_500MA | (CHARGE_ENABLED | TERM_EN | DYN_TMR_CLOCK_SPEED_REDUCED | TH_LOOP_ENABLED);
 	success = pmic_driver_write_reg(PMIC_REG_CHGCONFIG0, val);
 	if(!success) {
 		SEGGER_RTT_WriteString(0,"Error writing CHGCONFIG0 configuration!\n");
