@@ -16,80 +16,80 @@ static const unsigned char StrongClick_data[] = {
 	DRV260x_WAVEFORMSEQ1, 0x01,
 	DRV260x_WAVEFORMSEQ2, 0x00
 };
-const Waveform StrongClick = {MODE_RAM,4,StrongClick_data};
+const Waveform StrongClick = {MODE_ROM,4,StrongClick_data};
 
 static const unsigned char MediumClick_data[] = {
 	DRV260x_WAVEFORMSEQ1, 0x02,
 	DRV260x_WAVEFORMSEQ2, 0x00
 };
-const Waveform MediumClick = {MODE_RAM,4,MediumClick_data};
+const Waveform MediumClick = {MODE_ROM,4,MediumClick_data};
 
 static const unsigned char LightClick_data[] = {
 	DRV260x_WAVEFORMSEQ1, 0x03,
 	DRV260x_WAVEFORMSEQ2, 0x00
 };
-const Waveform LightClick = {MODE_RAM,4,LightClick_data};
+const Waveform LightClick = {MODE_ROM,4,LightClick_data};
 
 static const unsigned char Tick_data[] = {
 	DRV260x_WAVEFORMSEQ1, 0x04,
 	DRV260x_WAVEFORMSEQ2, 0x00
 };
-const Waveform Tick = {MODE_RAM,4,Tick_data};
+const Waveform Tick = {MODE_ROM,4,Tick_data};
 
 static const unsigned char Bump_data[] = {
 	DRV260x_WAVEFORMSEQ1, 0x05,
 	DRV260x_WAVEFORMSEQ2, 0x00
 };
-const Waveform Bump = {MODE_RAM,4,Bump_data};
+const Waveform Bump = {MODE_ROM,4,Bump_data};
 
 static const unsigned char DoubleStrongClick_data[] = {
 	DRV260x_WAVEFORMSEQ1, 0x06,
 	DRV260x_WAVEFORMSEQ2, 0x00
 };
-const Waveform DoubleStrongClick = {MODE_RAM,4,DoubleStrongClick_data};
+const Waveform DoubleStrongClick = {MODE_ROM,4,DoubleStrongClick_data};
 
 static const unsigned char DoubleStrongBump_data[] = {
 	DRV260x_FEEDBACK_CONTROL, FBBrakeFactor_Disabled, 0x70,
 	DRV260x_WAVEFORMSEQ1, 0x06,
 	DRV260x_WAVEFORMSEQ2, 0x00
 };
-const Waveform DoubleStrongBump = {MODE_RAM,9,DoubleStrongBump_data};
+const Waveform DoubleStrongBump = {MODE_ROM,9,DoubleStrongBump_data};
 
 static const unsigned char DoubleMediumClick_data[] = {
 	DRV260x_WAVEFORMSEQ1, 0x07,
 	DRV260x_WAVEFORMSEQ2, 0x00
 };
-const Waveform DoubleMediumClick = {MODE_RAM,4,DoubleMediumClick_data};
+const Waveform DoubleMediumClick = {MODE_ROM,4,DoubleMediumClick_data};
 
 static const unsigned char DoubleLightClick_data[] = {
 	DRV260x_WAVEFORMSEQ1, 0x08,
 	DRV260x_WAVEFORMSEQ2, 0x00
 };
-const Waveform DoubleLightClick = {MODE_RAM,4,DoubleLightClick_data};
+const Waveform DoubleLightClick = {MODE_ROM,4,DoubleLightClick_data};
 
 static const unsigned char TripleStrongClick_data[] = {
 	DRV260x_WAVEFORMSEQ1, 0x09,
 	DRV260x_WAVEFORMSEQ2, 0x00
 };
-const Waveform TripleStrongClick = {MODE_RAM,4,TripleStrongClick_data};
+const Waveform TripleStrongClick = {MODE_ROM,4,TripleStrongClick_data};
 
 static const unsigned char BuzzAlert_data[] = {
 	DRV260x_WAVEFORMSEQ1, 0x0A,
 	DRV260x_WAVEFORMSEQ2, 0x00
 };
-const Waveform BuzzAlert = {MODE_RAM,4,BuzzAlert_data};
+const Waveform BuzzAlert = {MODE_ROM,4,BuzzAlert_data};
 
 static const unsigned char RampUp_data[] = {
 	DRV260x_WAVEFORMSEQ1, 0x0B,
 	DRV260x_WAVEFORMSEQ2, 0x00
 };
-const Waveform RampUp = {MODE_RAM,4,RampUp_data};
+const Waveform RampUp = {MODE_ROM,4,RampUp_data};
 
 static const unsigned char RampDown_data[] = {
 	DRV260x_WAVEFORMSEQ1, 0x0C,
 	DRV260x_WAVEFORMSEQ2, 0x00
 };
-const Waveform RampDown = {MODE_RAM,4,RampDown_data};
+const Waveform RampDown = {MODE_ROM,4,RampDown_data};
 
 static const unsigned char StrongClick_OL_data[] = {
 	DRV260x_OD_CLAMP, Voltage_1p3, 0xFF,
@@ -105,7 +105,7 @@ static const unsigned char ClickBounce_data[] = {
 	DRV260x_WAVEFORMSEQ3, 0x0C,
 	DRV260x_WAVEFORMSEQ4, 0x00
 };
-const Waveform ClickBounce = {MODE_RAM,8,ClickBounce_data};
+const Waveform ClickBounce = {MODE_ROM,8,ClickBounce_data};
 
 static const unsigned char TransitionClick_data[] = {
 	DRV260x_WAVEFORMSEQ1, 0x0B,
@@ -113,43 +113,43 @@ static const unsigned char TransitionClick_data[] = {
 	DRV260x_WAVEFORMSEQ3, 0x01,
 	DRV260x_WAVEFORMSEQ4, 0x00
 };
-const Waveform TransitionClick = {MODE_RAM,8,TransitionClick_data};
+const Waveform TransitionClick = {MODE_ROM,8,TransitionClick_data};
 
 static const unsigned char GallopAlert_data[] = {
 	DRV260x_WAVEFORMSEQ1, 0x0D,
 	DRV260x_WAVEFORMSEQ2, 0x00
 };
-const Waveform GallopAlert = {MODE_RAM,4,GallopAlert_data};
+const Waveform GallopAlert = {MODE_ROM,4,GallopAlert_data};
 
 static const unsigned char PulsingAlert_data[] = {
 	DRV260x_WAVEFORMSEQ1, 0x0E,
 	DRV260x_WAVEFORMSEQ2, 0x00
 };
-const Waveform PulsingAlert = {MODE_RAM,4,PulsingAlert_data};
+const Waveform PulsingAlert = {MODE_ROM,4,PulsingAlert_data};
 
 static const unsigned char TestClick_data[] = {
 	DRV260x_WAVEFORMSEQ1, 0x0F,
 	DRV260x_WAVEFORMSEQ2, 0x00
 };
-const Waveform TestClick = {MODE_RAM,4,TestClick_data};
+const Waveform TestClick = {MODE_ROM,4,TestClick_data};
 
 static const unsigned char TestBuzz_data[] = {
 	DRV260x_WAVEFORMSEQ1, 0x10,
 	DRV260x_WAVEFORMSEQ2, 0x00
 };
-const Waveform TestBuzz = {MODE_RAM,4,TestBuzz_data};
+const Waveform TestBuzz = {MODE_ROM,4,TestBuzz_data};
 
 static const unsigned char LifeTestBuzz_data[] = {
 	DRV260x_WAVEFORMSEQ1, 0x11,
 	DRV260x_WAVEFORMSEQ2, 0x00
 };
-const Waveform LifeTestBuzz = {MODE_RAM,4,LifeTestBuzz_data};
+const Waveform LifeTestBuzz = {MODE_ROM,4,LifeTestBuzz_data};
 
 static const unsigned char LifeTestContinuousBuzz_data[] = {
 	DRV260x_WAVEFORMSEQ1, 0x12,
 	DRV260x_WAVEFORMSEQ2, 0x00
 };
-const Waveform LifeTestContinuousBuzz = {MODE_RAM,4,LifeTestContinuousBuzz_data};
+const Waveform LifeTestContinuousBuzz = {MODE_ROM,4,LifeTestContinuousBuzz_data};
 
 //--------------------------------------------------------//
 // PWM Mode Examples
