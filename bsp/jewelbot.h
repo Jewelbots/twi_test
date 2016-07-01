@@ -7,11 +7,19 @@
 
 #define I2C_SCL 12u
 #define I2C_SDA 11u
-#define HAPTIC_I2C_ADDR (0x5A)  // 0b1011 010x  // 0x5A << 1 //no need to do this in SDK10
+#define DRV2604_I2C_ADDR (0x5A)
+#define DRV2605_I2C_ADDR (0x58)
+#define HAPTIC_I2C_ADDR DRV2605_I2C_ADDR // 0b1011 010x  // 0x5A << 1 //no need to do this in SDK10
 #define PMIC_I2C_ADDR (0x48)    // 0b1001 000x //0x48 << 1   // same
 #define PMIC_I2C_ADDRESS PMIC_I2C_ADDR
 #define PMIC_INTERRUPT_PIN 27
+#define DRV2605_I2C_ADDRESS	HAPTIC_I2C_ADDR
+
+#define DRV2605_ENABLE_PIN		  DRV2604_ENABLE_PIN
+#define DRV2605_TRIGGER_PIN     DRV2604_TRIGGER_PIN
+
 #define DRV2604_I2C_ADDRESS	HAPTIC_I2C_ADDR
+
 #define DRV2604_ENABLE_PIN		(8)
 #define DRV2604_TRIGGER_PIN     (9)
 

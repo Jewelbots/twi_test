@@ -38,25 +38,18 @@ static bool I2C_WriteSingleByte(uint8_t regstr, uint8_t data)
 	uint8_t writeData[2];
 	writeData[0] = regstr;
 	writeData[1] = data;
-	ret_code_t err_code = nrf_drv_twi_tx(&app_twi_instance, DRV2604_I2C_ADDRESS, writeData, 2, false);
+	ret_code_t err_code = nrf_drv_twi_tx(&app_twi_instance, DRV2605_I2C_ADDRESS, writeData, 2, false);
   APP_ERROR_CHECK(err_code);
 	return (err_code == NRF_SUCCESS);
 }
-/*
-static bool I2C_WriteMultiByte(uint8_t * data, uint16_t len)
-{
-	ret_code_t err_code = nrf_drv_twi_tx(&app_twi_instance, DRV2604_I2C_ADDRESS, data, len, false);
-	APP_ERROR_CHECK(err_code);
-	return (NRF_SUCCESS == err_code);
-}
-*/
+
 static uint8_t I2C_ReadSingleByte( uint8_t regstr )
 {
 	uint8_t data;
 	data = regstr;
-	ret_code_t err_code = nrf_drv_twi_tx(&app_twi_instance, DRV2604_I2C_ADDRESS, &data, 1, true);
+	ret_code_t err_code = nrf_drv_twi_tx(&app_twi_instance, DRV2605_I2C_ADDRESS, &data, 1, true);
 	APP_ERROR_CHECK(err_code);
-	err_code = nrf_drv_twi_rx(&app_twi_instance, DRV2604_I2C_ADDRESS, &data, 1, false);
+	err_code = nrf_drv_twi_rx(&app_twi_instance, DRV2605_I2C_ADDRESS, &data, 1, false);
 	APP_ERROR_CHECK(err_code);
 	return data;
 }
@@ -68,8 +61,8 @@ static uint8_t I2C_ReadSingleByte( uint8_t regstr )
 void Haptics_Init(void)
 {
 	tickdelay = (unsigned int) TICKDELAY;
-	nrf_gpio_pin_clear(DRV2604_ENABLE_PIN);           // initialize enable pin to output and low
-	nrf_gpio_cfg_output(DRV2604_ENABLE_PIN);
+	nrf_gpio_pin_clear(DRV2605_ENABLE_PIN);           // initialize enable pin to output and low
+	nrf_gpio_cfg_output(DRV2605_ENABLE_PIN);
 
 
 	// Set DRV260x Hardware Controls
@@ -363,30 +356,30 @@ void Haptics_HardwareMode(uint8_t inputMode)
 	case MODE_PWM:		// PWM Mode
 /// XXX		P3DIR |= BIT2; 			// P3.2 = Output
 /// XXX		P3SEL |= BIT2;			// P3.2 = PWM Output
-		nrf_gpio_pin_clear(DRV2604_ENABLE_PIN);
-		nrf_gpio_cfg_output(DRV2604_ENABLE_PIN);
+		nrf_gpio_pin_clear(DRV2605_ENABLE_PIN);
+		nrf_gpio_cfg_output(DRV2605_ENABLE_PIN);
 		break;
 	case MODE_RTP:		// RTP Mode
 /// XXX		P3OUT &= 0xFB;			// P3.2 = Low
 /// XXX		P3SEL &= 0xFB;			// P3.2 = GPIO
 /// XXX		P3DIR |= 0x04;			// P3.2 = Output
-//	XXX don't reset enable here??    nrf_gpio_pin_clear(DRV2604_ENABLE_PIN);
-//		nrf_gpio_cfg_output(DRV2604_ENABLE_PIN);
+//	XXX don't reset enable here??    nrf_gpio_pin_clear(DRV2605_ENABLE_PIN);
+//		nrf_gpio_cfg_output(DRV2605_ENABLE_PIN);
 		break;
 	case MODE_ANALOG:	// Analog Mode
 /// XXX		P3DIR &= 0xFB;			// P3.2 = Hi-Z (MSP430 Pin Hi-Z)
-		nrf_gpio_cfg_input(DRV2604_ENABLE_PIN, NRF_GPIO_PIN_NOPULL);
+		nrf_gpio_cfg_input(DRV2605_ENABLE_PIN, NRF_GPIO_PIN_NOPULL);
 		break;
 	case MODE_A2H:
 /// XXX		P3DIR &= 0xFB;			// P3.2 = Hi-Z (MSP430 Pin Hi-Z)
-		nrf_gpio_cfg_input(DRV2604_ENABLE_PIN, NRF_GPIO_PIN_NOPULL);
+		nrf_gpio_cfg_input(DRV2605_ENABLE_PIN, NRF_GPIO_PIN_NOPULL);
 		break;
 	default:			// RAM or ROM modes
 /// XXX		P3DIR |= 0x04;			// P3.2 = Output
 /// XXX		P3OUT &= 0xFB;			// P3.2 = Low
 /// XXX		P3SEL &= 0xFB;			// P3.2 = GPIO
-//	XXX don't reset enable here??    nrf_gpio_pin_clear(DRV2604_ENABLE_PIN);
-//		nrf_gpio_cfg_output(DRV2604_ENABLE_PIN);
+//	XXX don't reset enable here??    nrf_gpio_pin_clear(DRV2605_ENABLE_PIN);
+//		nrf_gpio_cfg_output(DRV2605_ENABLE_PIN);
 		break;
 	}
 }
@@ -477,12 +470,12 @@ void Haptics_EnableTrigger()
 // XXX		P3OUT |= 0x04;								// Set Trigger Pin High
 // XXX		timerdelay(100);
 // XXX		P3OUT &= 0xFB;								// Set Trigger Pin Low
-		nrf_gpio_pin_set(DRV2604_TRIGGER_PIN);
+		nrf_gpio_pin_set(DRV2605_TRIGGER_PIN);
 		nrf_delay_us(100);
-		nrf_gpio_pin_clear(DRV2604_TRIGGER_PIN);
+		nrf_gpio_pin_clear(DRV2605_TRIGGER_PIN);
 	} else if(triggerType == TRIGGER_EXTERNAL_LEVEL) {
 // XXX		P3OUT |= 0x04;								// Set Trigger Pin High
-		nrf_gpio_pin_set(DRV2604_TRIGGER_PIN);
+		nrf_gpio_pin_set(DRV2605_TRIGGER_PIN);
 	}
 
 }
@@ -501,12 +494,12 @@ void Haptics_DisableTriggerActive()
 // XXX			P3OUT |= 0x04;								// Set Trigger Pin High
 // XXX			timerdelay(100);
 // XXX			P3OUT &= 0xFB;								// Set Trigger Pin Low
-			nrf_gpio_pin_set(DRV2604_TRIGGER_PIN);
+			nrf_gpio_pin_set(DRV2605_TRIGGER_PIN);
 			nrf_delay_us(100);
-			nrf_gpio_pin_clear(DRV2604_TRIGGER_PIN);
+			nrf_gpio_pin_clear(DRV2605_TRIGGER_PIN);
 		} else if(triggerType == TRIGGER_EXTERNAL_LEVEL) {
 // XXX			P3OUT &= ~0x04;								// Set Trigger Pin Low
-			nrf_gpio_pin_clear(DRV2604_TRIGGER_PIN);
+			nrf_gpio_pin_clear(DRV2605_TRIGGER_PIN);
 		}
 
 	}
@@ -526,12 +519,12 @@ void Haptics_DisableTrigger(uint8_t trigger)
 // XXX		P3OUT |= 0x04;								// Set Trigger Pin High
 // XXX		timerdelay(100);
 // XXX		P3OUT &= 0xFB;								// Set Trigger Pin Low
-		nrf_gpio_pin_set(DRV2604_TRIGGER_PIN);
+		nrf_gpio_pin_set(DRV2605_TRIGGER_PIN);
 		nrf_delay_us(100);
-		nrf_gpio_pin_clear(DRV2604_TRIGGER_PIN);
+		nrf_gpio_pin_clear(DRV2605_TRIGGER_PIN);
 	} else if(trigger == TRIGGER_EXTERNAL_LEVEL) {
 // XXX		P3OUT &= ~0x04;								// Set Trigger Pin Low
-		nrf_gpio_pin_clear(DRV2604_TRIGGER_PIN);
+		nrf_gpio_pin_clear(DRV2605_TRIGGER_PIN);
 	}
 }
 
@@ -678,7 +671,7 @@ uint8_t Haptics_IsEffectActive(void)
  */
 void Haptics_EnableAmplifier(void)
 {
-	nrf_gpio_pin_set(DRV2604_ENABLE_PIN);
+	nrf_gpio_pin_set(DRV2605_ENABLE_PIN);
 }
 
 /**
@@ -686,7 +679,7 @@ void Haptics_EnableAmplifier(void)
  */
 void Haptics_DisableAmplifier(void)
 {
-		nrf_gpio_pin_clear(DRV2604_ENABLE_PIN);
+		nrf_gpio_pin_clear(DRV2605_ENABLE_PIN);
 }
 
 /**
