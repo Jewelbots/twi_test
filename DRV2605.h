@@ -174,9 +174,7 @@ all eight identifiers are played (register addresses 0x04 through 0x0B), whichev
 // LRA Rated Voltage - Closed Loop
 #define VoltageRMS_LRA_RV_1p5	(0x3E)	// 1.5 Vrms
 #define VoltageRMS_LRA_RV_2p0	(0x53)	// 2.0 Vrms
-//Jewelbots LRA motor is smaller and higher frequency so new value needed
-#define VoltageRMS_LRA_RV_1p8	(0x39)	// 1.8 Vrms @ 235 Hz (was 0x38 for non 'L' version of Haptics chip).
-
+#define VoltageRMS_LRA_RV_1p8	(0x38)	//non L; was 0x39 for "L" version
 
 /****************************************************************************/
 /* OverDrive Clamp Voltage Register */
@@ -238,7 +236,7 @@ all eight identifiers are played (register addresses 0x04 through 0x0B), whichev
 /****************************************************************************/
 #define DRV260x_CONTROL1	(0x1B)
 /*** Register Bits ***/
-#define StartupBoost	(0x80)//OFF 0x00 //ON (0x80)
+#define StartupBoost	(0x80)
 #define BypassComp		(0x40)
 #define AC_Couple		(0x20)
 #define DC_Couple		(0x00)
@@ -313,7 +311,6 @@ all eight identifiers are played (register addresses 0x04 through 0x0B), whichev
 
 #define ERM_ClosedLoop			(0x00)
 #define ERM_OpenLoop			(0x20)
-
 #define SupplyCompDis			(0x10)
 
 #define	DataFormat_RTP_Signed	(0x00)
@@ -329,38 +326,26 @@ all eight identifiers are played (register addresses 0x04 through 0x0B), whichev
 #define LRA_AutoResonance		(0x00)
 #define LRA_OpenLoop			(0x01)
 #define LRA_ClosedLoop			(0x00)
+
 /****************************************************************************/
-/* Auto Calibration Memory Interface Register - Control4 register on 'L'    */ 
+/* Auto Calibration Memory Interface Register */
 /****************************************************************************/
 #define DRV260x_AUTOCAL_MEMIF	(0x1E)
 /*** Register Bits ***/
-#define AutoCalTime_150MS		  (0x00)
-#define AutoCalTime_250MS		  (0x10)
-#define AutoCalTime_500MS		  (0x20)
+#define AutoCalTime_150MS		(0x00)
+#define AutoCalTime_250MS		(0x10)
+#define AutoCalTime_500MS		(0x20)
 #define AutoCalTime_1000MS		(0x30)
-
 
 /* OTP_Status[2]	--Read Only
  * OTP_Fail[1]		--Read Only
  */
 
 #define OTP_Program				(0x01)	/*Warning:  Only light this bit if you are happy with the settings
-                                  * VDD must be 4.2V +/- 5%
-                                  * This process can only be executed once
-                                  * Non-Volatile Memory will be burned for Registers 0x16 through 0x1A
-                                  */
-/****************************************************************************/
-/* Control5 Register */
-/****************************************************************************/
-#define DRV260x_CONTROL5		(0x1F)
-/*** Register Bits ***/
-#define IDISS_TIME          (0x00)
-#define BLANKING_TIME       (0x00)
-#define PLAYBACK_INTERVAL   (0x00)
-#define LRA_AUTO_OPEN_LOOP  (0x00)
-#define AUTO_OL_CNT         (0x80)
-
-
+										* VDD must be 4.2V +/- 5%
+										* This process can only be executed once
+										* Non-Volatile Memory will be burned for Registers 0x16 through 0x1A
+										*/
 
 /****************************************************************************/
 /* VBAT Voltage Monitor Register */

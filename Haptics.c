@@ -42,14 +42,14 @@ static bool I2C_WriteSingleByte(uint8_t regstr, uint8_t data)
   APP_ERROR_CHECK(err_code);
 	return (err_code == NRF_SUCCESS);
 }
-
+/*
 static bool I2C_WriteMultiByte(uint8_t * data, uint16_t len)
 {
 	ret_code_t err_code = nrf_drv_twi_tx(&app_twi_instance, DRV2604_I2C_ADDRESS, data, len, false);
 	APP_ERROR_CHECK(err_code);
 	return (NRF_SUCCESS == err_code);
 }
-
+*/
 static uint8_t I2C_ReadSingleByte( uint8_t regstr )
 {
 	uint8_t data;

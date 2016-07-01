@@ -16,37 +16,34 @@
 
 #include <stdint.h>
 #include "DRV2605.h"
-#include "nrf_drv_twi.h"
 
 #define TICKDELAY	5000
-#define LRAFREQ		LRAFREQ_235		// Set the LRA open loop frequency (see frequency constants below)
+#define LRAFREQ		LRAFREQ_180		// Set the LRA open loop frequency (see frequency constants below)
 
 // Device Select - Write "1" next to the device that is on the EVM
-#define DRV2604		1
-#define DRV2605		0
+#define DRV2604		0
+#define DRV2605		1
 
 // @TODO - Set control register settings
 // Default Control Register Settings
-#define DEFAULT_CTRL1	StartupBoost | DC_Couple | DriveTime_2p1m
+#define DEFAULT_CTRL1	StartupBoost | DriveTime_2p4m
 #define DEFAULT_CTRL2	BiDir_Input| BrakeStabilizer | SampleTime_300us | BlankingTime_Short | IDissTime_Short
 #define DEFAULT_CTRL3	NGThresh_4PERCENT | ERM_ClosedLoop | DataFormat_RTP_Signed | LRADriveMode_Once | InputMode_PWM | LRA_AutoResonance
-#define DEFAULT_CTRL4 
-#define DEFAULT_CTRL5
 
 // DRV2605 Input Modes
-#define MODE_RAM				0	    // RAM Playback Mode
-#define MODE_ROM				1	    // ROM Playback Mode (Reserved for DRV2605)
-#define MODE_PWM				2	    // PWM Playback Mode
-#define MODE_RTP				3	    // RTP Real-Time Playback Mode
-#define MODE_ANALOG			4	    // Analog Input Mode
-#define MODE_A2H				5	    // Audio-to-Haptics Mode
-#define MODE_DEFAULT	  6     // Special RAM mode
+#define MODE_RAM				0	// RAM Playback Mode
+#define MODE_ROM				1	// ROM Playback Mode (Reserved for DRV2605)
+#define MODE_PWM				2	// PWM Playback Mode
+#define MODE_RTP				3	// RTP Real-Time Playback Mode
+#define MODE_ANALOG				4	// Analog Input Mode
+#define MODE_A2H				5	// Audio-to-Haptics Mode
+#define MODE_DEFAULT			6   // Special RAM mode
 
 // DRV260x Trigger Modes
-#define TRIGGER_INTERNAL		    0	  // Internal trigger mode
-#define TRIGGER_EXTERNAL_EDGE	  1   // External trigger, Edge mode
-#define TRIGGER_EXTERNAL_LEVEL	2	  // External trigger, Level mode
-     
+#define TRIGGER_INTERNAL		0	// Internal trigger mode
+#define TRIGGER_EXTERNAL_EDGE	1	// External trigger, Edge mode
+#define TRIGGER_EXTERNAL_LEVEL	2	// External trigger, Level mode
+
 // DRV260x Actuator
 #define ACTUATOR_ERM			0
 #define ACTUATOR_LRA			1
@@ -96,10 +93,19 @@ void Haptics_Init(void);
 void Haptics_SetControlRegisters(void);
 
 /**
+ * Haptics_RunAutoCal_LRA - run auto-calibration for an ERM actuator
+ */
+void Haptics_RunAutoCal_ERM(void);
+
+/**
  * Haptics_RunAutoCal_LRA - run auto-calibration for an LRA actuator
  */
 void Haptics_RunAutoCal_LRA(void);
 
+/**
+ * Haptics_RecordAutoCalValues - save auto-calibration values
+ */
+void Haptics_RecordAutoCalValues(uint8_t recordAutoCal);
 
 /**
  * Haptics_Diagnostics - run actuator diagnostics
