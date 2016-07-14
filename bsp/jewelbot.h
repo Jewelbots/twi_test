@@ -8,7 +8,7 @@
 #define I2C_SCL 12u
 #define I2C_SDA 11u
 #define DRV2604_I2C_ADDR (0x5A)
-#define DRV2605_I2C_ADDR (0x58)
+#define DRV2605_I2C_ADDR (0x5A)
 #define HAPTIC_I2C_ADDR DRV2605_I2C_ADDR // 0b1011 010x  // 0x5A << 1 //no need to do this in SDK10
 #define PMIC_I2C_ADDR (0x48)    // 0b1001 000x //0x48 << 1   // same
 #define PMIC_I2C_ADDRESS PMIC_I2C_ADDR

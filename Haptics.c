@@ -71,12 +71,13 @@ void Haptics_Init(void)
 
 	nrf_delay_us(500);																// Pause after enabling
 
-  I2C_WriteSingleByte(DRV260x_MODE, Dev_Reset);			// Internal reset function
-  nrf_delay_us(250);
-	Haptics_DisableAmplifier();												// Mode switch reset
-	nrf_delay_us(250);
-	Haptics_EnableAmplifier();
-	nrf_delay_us(250);
+  //I2C_WriteSingleByte(DRV260x_MODE, Dev_Reset);			// Internal reset function
+	//SEGGER_RTT_WriteString(0, "After first write\n");
+  //nrf_delay_us(250);
+	//Haptics_DisableAmplifier();												// Mode switch reset
+	//nrf_delay_us(250);
+	//Haptics_EnableAmplifier();
+	//nrf_delay_us(250);
 
 	// DRV260x Initialization
   I2C_WriteSingleByte(DRV260x_MODE, ACTIVE);    		// Exit STANDBY
@@ -101,9 +102,12 @@ void Haptics_Init(void)
 	I2C_WriteSingleByte(DRV2604_RAMADDR_UB, 0x01);
 	I2C_WriteSingleByte(DRV2604_RAMADDR_LB, 0x00);
 	I2C_WriteMultiByte((unsigned char*) DRV2604_DATA, DRV2604_DATASIZE);		// Send waveform data
-
 #endif
 
+#if DRV2605
+	Haptics_SetLibrary(6);
+#endif
+	
 	Haptics_SetControlRegisters();		// Set control register values
   //SEGGER_RTT_WriteString(0, "q");
 	Haptics_DisableAmplifier();
@@ -744,4 +748,14 @@ void Haptics_WaitWaveformComplete()
 // XXX			sleep(500);
 		}
 	}
+}
+
+void Haptics_SendWaveIndex(uint8_t W_index)
+{
+	Haptics_EnableAmplifier();
+	I2C_WriteSingleByte(DRV260x_WAVEFORMSEQ1, W_index);
+	I2C_WriteSingleByte(DRV260x_GO, GO);
+	while(I2C_ReadSingleByte(DRV260x_GO) == GO) {
+		}
+	Haptics_DisableAmplifier();
 }

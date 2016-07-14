@@ -18,7 +18,7 @@
 #include "DRV2605.h"
 
 #define TICKDELAY	5000
-#define LRAFREQ		LRAFREQ_180		// Set the LRA open loop frequency (see frequency constants below)
+#define LRAFREQ		LRAFREQ_235		// Set the LRA open loop frequency (see frequency constants below)
 
 // Device Select - Write "1" next to the device that is on the EVM
 #define DRV2604		0
@@ -26,7 +26,7 @@
 
 // @TODO - Set control register settings
 // Default Control Register Settings
-#define DEFAULT_CTRL1	StartupBoost | DriveTime_2p4m
+#define DEFAULT_CTRL1	StartupBoost | DriveTime_2p1m
 #define DEFAULT_CTRL2	BiDir_Input| BrakeStabilizer | SampleTime_300us | BlankingTime_Short | IDissTime_Short
 #define DEFAULT_CTRL3	NGThresh_4PERCENT | ERM_ClosedLoop | DataFormat_RTP_Signed | LRADriveMode_Once | InputMode_PWM | LRA_AutoResonance
 
@@ -296,5 +296,8 @@ void Haptics_SetSequenceRegister(uint8_t sequenceReg, uint8_t waveformIndex);
  * Haptics_WaitWaveformComplete - wait for playback to complete for internal trigger waveforms
  */
 void Haptics_WaitWaveformComplete(void);
+
+// Send waveform index and play it, for 2605 chip
+void Haptics_SendWaveIndex(uint8_t W_index);
 
 #endif /* HAPTICS_H_ */

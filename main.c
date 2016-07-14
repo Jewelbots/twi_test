@@ -165,7 +165,7 @@ int main(void)
       SEGGER_RTT_WriteString(0, "haptics_test_run1\n");
       haptics_test_run1();
       SEGGER_RTT_WriteString(0, "\n");
-      nrf_delay_ms(10000);
+     nrf_delay_ms(10000);
     }
     else { 
       SEGGER_RTT_WriteString(0, "haptics_test_run4\n");
